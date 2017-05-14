@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shframework.modules.dict.mapper.DictEduCommonMajorFieldMapper" >
+  <resultMap id="BaseResultMap" type="dictEduCommonMajorField" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="major_id" property="majorId" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="priority" property="priority" jdbcType="INTEGER" />
+    <result column="principal" property="principal" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="locked" property="locked" jdbcType="INTEGER" />
+    <result column="standard" property="standard" jdbcType="INTEGER" />
+    <result column="logic_delete" property="logicDelete" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <!-- 
+   /**
+     * 根据查询条件map，查找符合条件的记录数量
+     * @param parMap 
+     * {
+     * String tableName;
+     * String searchCondition;
+     * int limitStart;
+     * int limitEnd;
+     * }
+     * @return
+     * @author RanWeizheng
+     */
+   -->
+   <select id="countByMap" parameterType="map" resultType="java.lang.Integer" >
+    select count(*) from dict_edu_common_major_field as _decmf
+    <where>
+      _decmf.logic_delete = 0
+     ${searchCondition}
+     </where>
+  </select>
+  
+   <!-- 
+    /**
+     * 根据查询条件map，查找符合条件的记录
+     * @param parMap 
+     * {
+     * String tableName;
+     * String searchCondition;
+     * int limitStart;
+     * int limitEnd;
+     * }
+     * @return
+     * @author RanWeizheng
+     */
+   -->
+  <select id="selectByMap" resultMap="BaseResultMap" parameterType="map" >
+    select
+    _decmf.id, 
+    _decmf.major_id, 
+    _decmf.code, 
+    _decmf.title, 
+    _decmf.status, 
+    _decmf.locked, 
+    _decmf.standard,
+    _decmf.priority,
+    _decmf.principal,
+    _decmf.logic_delete
+    
+    from 
+    	dict_edu_common_major_field as  _decmf
+    WHERE
+    	_decmf.logic_delete = 0
+   		 
+    ${searchCondition}
+    <if test="searchCondition == null or searchCondition == ''" >
+      order by ${defaultSortField}
+    </if>
+    limit #{limitStart}, #{limitEnd}
+  </select>
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, major_id, code, title, priority, principal, status, locked, standard, logic_delete
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shframework.modules.dict.entity.DictEduCommonMajorFieldExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from dict_edu_common_major_field
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <choose >
+      <when test="limitStart != -1 and limitEnd != -1" >
+        limit ${limitStart} , ${limitEnd}
+      </when>
+      <when test="limitStart != -1" >
+        limit ${limitStart}
+      </when>
+    </choose>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dict_edu_common_major_field
+    where id = #{id,jdbcType=INTEGER}
+    and logic_delete = 0
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dict_edu_common_major_field
+    where id = #{id,jdbcType=INTEGER}
+    and logic_delete = 0
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shframework.modules.dict.entity.DictEduCommonMajorFieldExample" >
+    delete from dict_edu_common_major_field
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shframework.modules.dict.entity.DictEduCommonMajorField" >
+    insert into dict_edu_common_major_field (id, major_id, code, 
+      title, priority, principal, status, 
+      locked, standard, logic_delete
+      )
+    values (#{id,jdbcType=INTEGER}, #{majorId,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, 
+      #{title,jdbcType=VARCHAR}, #{priority,jdbcType=INTEGER}, #{principal,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER}, #{locked,jdbcType=INTEGER}, #{standard,jdbcType=INTEGER}, 
+      #{logicDelete,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.shframework.modules.dict.entity.DictEduCommonMajorField" >
+    insert into dict_edu_common_major_field
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="majorId != null" >
+        major_id,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="priority != null" >
+        priority,
+      </if>
+      <if test="principal != null" >
+        principal,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="locked != null" >
+        locked,
+      </if>
+      <if test="standard != null" >
+        standard,
+      </if>
+      <if test="logicDelete != null" >
+        logic_delete,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="majorId != null" >
+        #{majorId,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="priority != null" >
+        #{priority,jdbcType=INTEGER},
+      </if>
+      <if test="principal != null" >
+        #{principal,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="locked != null" >
+        #{locked,jdbcType=INTEGER},
+      </if>
+      <if test="standard != null" >
+        #{standard,jdbcType=INTEGER},
+      </if>
+      <if test="logicDelete != null" >
+        #{logicDelete,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shframework.modules.dict.entity.DictEduCommonMajorFieldExample" resultType="java.lang.Integer" >
+    select count(*) from dict_edu_common_major_field
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update dict_edu_common_major_field
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.majorId != null" >
+        major_id = #{record.majorId,jdbcType=INTEGER},
+      </if>
+      <if test="record.code != null" >
+        code = #{record.code,jdbcType=VARCHAR},
+      </if>
+      <if test="record.title != null" >
+        title = #{record.title,jdbcType=VARCHAR},
+      </if>
+      <if test="record.priority != null" >
+        priority = #{record.priority,jdbcType=INTEGER},
+      </if>
+      <if test="record.principal != null" >
+        principal = #{record.principal,jdbcType=INTEGER},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.locked != null" >
+        locked = #{record.locked,jdbcType=INTEGER},
+      </if>
+      <if test="record.standard != null" >
+        standard = #{record.standard,jdbcType=INTEGER},
+      </if>
+      <if test="record.logicDelete != null" >
+        logic_delete = #{record.logicDelete,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update dict_edu_common_major_field
+    set id = #{record.id,jdbcType=INTEGER},
+      major_id = #{record.majorId,jdbcType=INTEGER},
+      code = #{record.code,jdbcType=VARCHAR},
+      title = #{record.title,jdbcType=VARCHAR},
+      priority = #{record.priority,jdbcType=INTEGER},
+      principal = #{record.principal,jdbcType=INTEGER},
+      status = #{record.status,jdbcType=INTEGER},
+      locked = #{record.locked,jdbcType=INTEGER},
+      standard = #{record.standard,jdbcType=INTEGER},
+      logic_delete = #{record.logicDelete,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shframework.modules.dict.entity.DictEduCommonMajorField" >
+    update dict_edu_common_major_field
+    <set >
+      <if test="majorId != null" >
+        major_id = #{majorId,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="priority != null" >
+        priority = #{priority,jdbcType=INTEGER},
+      </if>
+      <if test="principal != null" >
+        principal = #{principal,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="locked != null" >
+        locked = #{locked,jdbcType=INTEGER},
+      </if>
+      <if test="standard != null" >
+        standard = #{standard,jdbcType=INTEGER},
+      </if>
+      <if test="logicDelete != null" >
+        logic_delete = #{logicDelete,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+    and logic_delete = 0
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shframework.modules.dict.entity.DictEduCommonMajorField" >
+    update dict_edu_common_major_field
+    set major_id = #{majorId,jdbcType=INTEGER},
+      code = #{code,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      priority = #{priority,jdbcType=INTEGER},
+      principal = #{principal,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      locked = #{locked,jdbcType=INTEGER},
+      standard = #{standard,jdbcType=INTEGER},
+      logic_delete = #{logicDelete,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+    and logic_delete = 0
+  </update>
+  
+  <!-- 
+     /**
+     * <p>针对初始化学生信息时，根据专业(专业方向)查找专业方向id的专用方法：应用电子技术(广播电视网络)：专业(专业方向)</p>
+     * @param majorTitle
+     * @param majorFieldTitle
+     * @return
+     * @author zhangjinkui
+     */
+  -->
+    <select id="selectMajorFieldIdByMajorTitleAndMajorFieldTitle" parameterType="java.lang.String" resultType="java.lang.Integer" >
+    select _major_field.id from dict_edu_common_major_field AS _major_field
+    inner join dict_edu_common_major AS _major ON  _major.id = _major_field.major_id
+    where _major_field.logic_delete = 0
+    AND _major.title = #{0}
+    AND _major_field.title = #{1}
+  </select>
+  
+   <select id="selectAllMajorField" parameterType="java.lang.String" resultType="java.util.HashMap" >
+    select _major_field.code,_major_field.title, _major.code AS majorCode, _major.title AS majorTitle,
+      CASE _major_field.standard
+        WHEN 0 then '国标'
+        WHEN 1 then '校标'
+        WHEN -1 then '未定义'
+      END standard2
+    from dict_edu_common_major_field AS _major_field
+    inner join dict_edu_common_major AS _major ON  _major.id = _major_field.major_id
+    where _major_field.logic_delete = 0
+    AND _major_field.status = 1;
+  </select>
+  
+   <select id="selectByTableName" parameterType="map" resultType="java.util.HashMap" statementType="STATEMENT">
+    select code,title,
+	    CASE standard
+	      WHEN 0 then '国标'
+	      WHEN 1 then '校标'
+	      WHEN -1 then '未定义'
+      END
+    from ${tableName} 
+    where logic_delete = 0
+    AND status = 1;
+  </select>
+  
+</mapper>

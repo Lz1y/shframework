@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shframework.modules.sys.mapper.ComnTemplateMapper" >
+  <resultMap id="BaseResultMap" type="com.shframework.modules.sys.entity.ComnTemplate" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="criteria" property="criteria" jdbcType="VARCHAR" />
+    <result column="resource_id" property="resourceId" jdbcType="INTEGER" />
+    <result column="file_format" property="fileFormat" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="last_modify_user_id" property="lastModifyUserId" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="logic_delete" property="logicDelete" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, title, criteria,resource_id, file_format, type, description, last_modify_user_id, create_date, 
+    modify_date, status, logic_delete
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shframework.modules.sys.entity.ComnTemplateExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from comn_template
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <choose >
+      <when test="limitStart != -1 and limitEnd != -1" >
+        limit ${limitStart} , ${limitEnd}
+      </when>
+      <when test="limitStart != -1" >
+        limit ${limitStart}
+      </when>
+    </choose>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from comn_template
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from comn_template
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shframework.modules.sys.entity.ComnTemplateExample" >
+    delete from comn_template
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shframework.modules.sys.entity.ComnTemplate" useGeneratedKeys="true" keyProperty="id">
+    insert into comn_template (id, title, criteria, resource_id,
+      file_format, type, description, 
+      last_modify_user_id, create_date, modify_date, 
+      status, logic_delete)
+    values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{criteria,jdbcType=VARCHAR}, #{resourceId,jdbcType=INTEGER},
+      #{fileFormat,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}, 
+      #{lastModifyUserId,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{modifyDate,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=INTEGER}, #{logicDelete,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shframework.modules.sys.entity.ComnTemplate" useGeneratedKeys="true" keyProperty="id" >
+    insert into comn_template
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="criteria != null" >
+        criteria,
+      </if>
+       <if test="resourceId != null" >
+        resource_id,
+      </if>
+      <if test="fileFormat != null" >
+        file_format,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="lastModifyUserId != null" >
+        last_modify_user_id,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="modifyDate != null" >
+        modify_date,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="logicDelete != null" >
+        logic_delete,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="criteria != null" >
+        #{criteria,jdbcType=VARCHAR},
+      </if>
+       <if test="resourceId != null" >
+        #{resourceId,jdbcType=INTEGER},
+      </if>
+      <if test="fileFormat != null" >
+        #{fileFormat,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="lastModifyUserId != null" >
+        #{lastModifyUserId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyDate != null" >
+        #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="logicDelete != null" >
+        #{logicDelete,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shframework.modules.sys.entity.ComnTemplateExample" resultType="java.lang.Integer" >
+    select count(*) from comn_template
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update comn_template
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.title != null" >
+        title = #{record.title,jdbcType=VARCHAR},
+      </if>
+      <if test="record.criteria != null" >
+        criteria = #{record.criteria,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fileFormat != null" >
+        file_format = #{record.fileFormat,jdbcType=INTEGER},
+      </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=INTEGER},
+      </if>
+      <if test="record.description != null" >
+        description = #{record.description,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lastModifyUserId != null" >
+        last_modify_user_id = #{record.lastModifyUserId,jdbcType=INTEGER},
+      </if>
+      <if test="record.createDate != null" >
+        create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.modifyDate != null" >
+        modify_date = #{record.modifyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.logicDelete != null" >
+        logic_delete = #{record.logicDelete,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update comn_template
+    set id = #{record.id,jdbcType=INTEGER},
+      title = #{record.title,jdbcType=VARCHAR},
+      criteria = #{record.criteria,jdbcType=VARCHAR},
+      file_format = #{record.fileFormat,jdbcType=INTEGER},
+      type = #{record.type,jdbcType=INTEGER},
+      description = #{record.description,jdbcType=VARCHAR},
+      last_modify_user_id = #{record.lastModifyUserId,jdbcType=INTEGER},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      modify_date = #{record.modifyDate,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=INTEGER},
+      logic_delete = #{record.logicDelete,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shframework.modules.sys.entity.ComnTemplate" >
+    update comn_template
+    <set >
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="criteria != null" >
+        criteria = #{criteria,jdbcType=VARCHAR},
+      </if>
+      <if test="fileFormat != null" >
+        file_format = #{fileFormat,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="lastModifyUserId != null" >
+        last_modify_user_id = #{lastModifyUserId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyDate != null" >
+        modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="logicDelete != null" >
+        logic_delete = #{logicDelete,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shframework.modules.sys.entity.ComnTemplate" >
+    update comn_template
+    set title = #{title,jdbcType=VARCHAR},
+      criteria = #{criteria,jdbcType=VARCHAR},
+      file_format = #{fileFormat,jdbcType=INTEGER},
+      type = #{type,jdbcType=INTEGER},
+      description = #{description,jdbcType=VARCHAR},
+      last_modify_user_id = #{lastModifyUserId,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      logic_delete = #{logicDelete,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+<select id="getTemplateListByTitle" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM comn_template
+	WHERE resource_id = #{0} 
+	and status != 0
+	and logic_delete = 0
+</select>
+<!-- file_format 0:excel， 1:dbf ; type 0:导入 ，1：导出；按类型精确查询 add by zhangjk-->
+<select id="queryTemplateListByMap" parameterType="map" resultMap="BaseResultMap" >
+	SELECT
+    <include refid="Base_Column_List" />
+    FROM comn_template 
+	WHERE 
+	1 = 1 
+	and resource_id = #{resourceId,jdbcType=INTEGER} 
+	and file_format = #{fileFormat,jdbcType=INTEGER} 
+	and type = #{type,jdbcType=INTEGER} 
+	and status != 0 
+	and logic_delete = 0 
+  </select>
+
+<select id="queryTemplateCount" parameterType="map" resultType="java.lang.Integer">
+	select count(id) 
+	from comn_template _comn WHERE 1 = 1
+	<if test="resourceId != null ">
+	and _comn.resource_id = #{resourceId,jdbcType=INTEGER}
+	</if>
+	and _comn.status != 0
+	and _comn.logic_delete = 0
+	${searchCondition}
+  </select>
+  
+  <select id="queryTemplate" parameterType="map" resultMap="BaseResultMap">
+	SELECT
+		<include refid="Base_Column_List" />
+	FROM
+		comn_template _comn
+	WHERE 1 = 1
+	and _comn.resource_id = #{resourceId,jdbcType=INTEGER} 
+	and _comn.status != 0
+	and _comn.logic_delete = 0
+	${searchCondition}
+    <if test="searchCondition == null and defaultSortField != null">
+      order by ${defaultSortField}
+    </if>
+	limit #{limitStart}, #{limitEnd}
+  </select>
+  
+</mapper>

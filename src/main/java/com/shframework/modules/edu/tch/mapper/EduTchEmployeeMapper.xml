@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shframework.modules.edu.tch.mapper.EduTchEmployeeMapper" >
+  <resultMap id="BaseResultMap" type="com.shframework.modules.edu.tch.entity.EduTchEmployee" >
+    <id column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="pinyin" property="pinyin" jdbcType="VARCHAR" />
+    <result column="jianpin" property="jianpin" jdbcType="VARCHAR" />
+    <result column="gender" property="gender" jdbcType="INTEGER" />
+    <result column="post_title" property="postTitle" jdbcType="VARCHAR" />
+    <result column="department_id" property="departmentId" jdbcType="INTEGER" />
+    <result column="post_type_id" property="postTypeId" jdbcType="INTEGER" />
+    <result column="staff_type_id" property="staffTypeId" jdbcType="INTEGER" />
+    <result column="post_level_id" property="postLevelId" jdbcType="INTEGER" />
+    <result column="teach_flag" property="teachFlag" jdbcType="INTEGER" />
+    <result column="retire_flag" property="retireFlag" jdbcType="INTEGER" />
+    <result column="cert_flag" property="certFlag" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="last_modify_user_id" property="lastModifyUserId" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
+    <result column="logic_delete" property="logicDelete" jdbcType="INTEGER" />
+    <collection property="user" ofType="user">
+	  <id property="id" column="id"/>
+	  <result property="userNo" column="user_no"/>
+	  <result property="username" column="username"/>
+	  <result property="password" column="password"/>
+	  <result property="email" column="email"/>
+	  <result property="mobile" column="mobile"/>
+	  <result property="salt" column="salt"/>
+	  <result property="createDate" column="create_date"/>
+	</collection>
+	<collection property="department" ofType="dictEduCommonDepartment">
+		<id column="id" property="id" jdbcType="INTEGER" />
+	    <result column="code" property="code" jdbcType="VARCHAR" />
+	    <result column="title" property="title" jdbcType="VARCHAR" />
+	</collection>
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    user_id, pinyin, jianpin, gender, post_title, department_id, post_type_id, staff_type_id, 
+    post_level_id, teach_flag, retire_flag, cert_flag, status, last_modify_user_id, create_date, 
+    modify_date, logic_delete
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shframework.modules.edu.tch.entity.EduTchEmployeeExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from edu_tch_employee
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <choose >
+      <when test="limitStart != -1 and limitEnd != -1" >
+        limit ${limitStart} , ${limitEnd}
+      </when>
+      <when test="limitStart != -1" >
+        limit ${limitStart}
+      </when>
+    </choose>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from edu_tch_employee
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from edu_tch_employee
+    where user_id = #{userId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shframework.modules.edu.tch.entity.EduTchEmployeeExample" >
+    delete from edu_tch_employee
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shframework.modules.edu.tch.entity.EduTchEmployee" >
+    insert into edu_tch_employee (user_id, pinyin, jianpin, 
+      gender, post_title, department_id, 
+      post_type_id, staff_type_id, post_level_id, 
+      teach_flag, retire_flag, cert_flag, 
+      status, last_modify_user_id, create_date, 
+      modify_date, logic_delete)
+    values (#{userId,jdbcType=INTEGER}, #{pinyin,jdbcType=VARCHAR}, #{jianpin,jdbcType=VARCHAR}, 
+      #{gender,jdbcType=INTEGER}, #{postTitle,jdbcType=VARCHAR}, #{departmentId,jdbcType=INTEGER}, 
+      #{postTypeId,jdbcType=INTEGER}, #{staffTypeId,jdbcType=INTEGER}, #{postLevelId,jdbcType=INTEGER}, 
+      #{teachFlag,jdbcType=INTEGER}, #{retireFlag,jdbcType=INTEGER}, #{certFlag,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER}, #{lastModifyUserId,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{modifyDate,jdbcType=TIMESTAMP}, #{logicDelete,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shframework.modules.edu.tch.entity.EduTchEmployee" >
+    insert into edu_tch_employee
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="pinyin != null" >
+        pinyin,
+      </if>
+      <if test="jianpin != null" >
+        jianpin,
+      </if>
+      <if test="gender != null" >
+        gender,
+      </if>
+      <if test="postTitle != null" >
+        post_title,
+      </if>
+      <if test="departmentId != null" >
+        department_id,
+      </if>
+      <if test="postTypeId != null" >
+        post_type_id,
+      </if>
+      <if test="staffTypeId != null" >
+        staff_type_id,
+      </if>
+      <if test="postLevelId != null" >
+        post_level_id,
+      </if>
+      <if test="teachFlag != null" >
+        teach_flag,
+      </if>
+      <if test="retireFlag != null" >
+        retire_flag,
+      </if>
+      <if test="certFlag != null" >
+        cert_flag,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="lastModifyUserId != null" >
+        last_modify_user_id,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="modifyDate != null" >
+        modify_date,
+      </if>
+      <if test="logicDelete != null" >
+        logic_delete,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="pinyin != null" >
+        #{pinyin,jdbcType=VARCHAR},
+      </if>
+      <if test="jianpin != null" >
+        #{jianpin,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null" >
+        #{gender,jdbcType=INTEGER},
+      </if>
+      <if test="postTitle != null" >
+        #{postTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentId != null" >
+        #{departmentId,jdbcType=INTEGER},
+      </if>
+      <if test="postTypeId != null" >
+        #{postTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="staffTypeId != null" >
+        #{staffTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="postLevelId != null" >
+        #{postLevelId,jdbcType=INTEGER},
+      </if>
+      <if test="teachFlag != null" >
+        #{teachFlag,jdbcType=INTEGER},
+      </if>
+      <if test="retireFlag != null" >
+        #{retireFlag,jdbcType=INTEGER},
+      </if>
+      <if test="certFlag != null" >
+        #{certFlag,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="lastModifyUserId != null" >
+        #{lastModifyUserId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyDate != null" >
+        #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="logicDelete != null" >
+        #{logicDelete,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shframework.modules.edu.tch.entity.EduTchEmployeeExample" resultType="java.lang.Integer" >
+    select count(*) from edu_tch_employee
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update edu_tch_employee
+    <set >
+      <if test="record.userId != null" >
+        user_id = #{record.userId,jdbcType=INTEGER},
+      </if>
+      <if test="record.pinyin != null" >
+        pinyin = #{record.pinyin,jdbcType=VARCHAR},
+      </if>
+      <if test="record.jianpin != null" >
+        jianpin = #{record.jianpin,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gender != null" >
+        gender = #{record.gender,jdbcType=INTEGER},
+      </if>
+      <if test="record.postTitle != null" >
+        post_title = #{record.postTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.departmentId != null" >
+        department_id = #{record.departmentId,jdbcType=INTEGER},
+      </if>
+      <if test="record.postTypeId != null" >
+        post_type_id = #{record.postTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="record.staffTypeId != null" >
+        staff_type_id = #{record.staffTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="record.postLevelId != null" >
+        post_level_id = #{record.postLevelId,jdbcType=INTEGER},
+      </if>
+      <if test="record.teachFlag != null" >
+        teach_flag = #{record.teachFlag,jdbcType=INTEGER},
+      </if>
+      <if test="record.retireFlag != null" >
+        retire_flag = #{record.retireFlag,jdbcType=INTEGER},
+      </if>
+      <if test="record.certFlag != null" >
+        cert_flag = #{record.certFlag,jdbcType=INTEGER},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.lastModifyUserId != null" >
+        last_modify_user_id = #{record.lastModifyUserId,jdbcType=INTEGER},
+      </if>
+      <if test="record.createDate != null" >
+        create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.modifyDate != null" >
+        modify_date = #{record.modifyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.logicDelete != null" >
+        logic_delete = #{record.logicDelete,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update edu_tch_employee
+    set user_id = #{record.userId,jdbcType=INTEGER},
+      pinyin = #{record.pinyin,jdbcType=VARCHAR},
+      jianpin = #{record.jianpin,jdbcType=VARCHAR},
+      gender = #{record.gender,jdbcType=INTEGER},
+      post_title = #{record.postTitle,jdbcType=VARCHAR},
+      department_id = #{record.departmentId,jdbcType=INTEGER},
+      post_type_id = #{record.postTypeId,jdbcType=INTEGER},
+      staff_type_id = #{record.staffTypeId,jdbcType=INTEGER},
+      post_level_id = #{record.postLevelId,jdbcType=INTEGER},
+      teach_flag = #{record.teachFlag,jdbcType=INTEGER},
+      retire_flag = #{record.retireFlag,jdbcType=INTEGER},
+      cert_flag = #{record.certFlag,jdbcType=INTEGER},
+      status = #{record.status,jdbcType=INTEGER},
+      last_modify_user_id = #{record.lastModifyUserId,jdbcType=INTEGER},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      modify_date = #{record.modifyDate,jdbcType=TIMESTAMP},
+      logic_delete = #{record.logicDelete,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shframework.modules.edu.tch.entity.EduTchEmployee" >
+    update edu_tch_employee
+    <set >
+      <if test="pinyin != null" >
+        pinyin = #{pinyin,jdbcType=VARCHAR},
+      </if>
+      <if test="jianpin != null" >
+        jianpin = #{jianpin,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null" >
+        gender = #{gender,jdbcType=INTEGER},
+      </if>
+      <if test="postTitle != null" >
+        post_title = #{postTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentId != null" >
+        department_id = #{departmentId,jdbcType=INTEGER},
+      </if>
+      <if test="postTypeId != null" >
+        post_type_id = #{postTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="staffTypeId != null" >
+        staff_type_id = #{staffTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="postLevelId != null" >
+        post_level_id = #{postLevelId,jdbcType=INTEGER},
+      </if>
+      <if test="teachFlag != null" >
+        teach_flag = #{teachFlag,jdbcType=INTEGER},
+      </if>
+      <if test="retireFlag != null" >
+        retire_flag = #{retireFlag,jdbcType=INTEGER},
+      </if>
+      <if test="certFlag != null" >
+        cert_flag = #{certFlag,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="lastModifyUserId != null" >
+        last_modify_user_id = #{lastModifyUserId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyDate != null" >
+        modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="logicDelete != null" >
+        logic_delete = #{logicDelete,jdbcType=INTEGER},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shframework.modules.edu.tch.entity.EduTchEmployee" >
+    update edu_tch_employee
+    set pinyin = #{pinyin,jdbcType=VARCHAR},
+      jianpin = #{jianpin,jdbcType=VARCHAR},
+      gender = #{gender,jdbcType=INTEGER},
+      post_title = #{postTitle,jdbcType=VARCHAR},
+      department_id = #{departmentId,jdbcType=INTEGER},
+      post_type_id = #{postTypeId,jdbcType=INTEGER},
+      staff_type_id = #{staffTypeId,jdbcType=INTEGER},
+      post_level_id = #{postLevelId,jdbcType=INTEGER},
+      teach_flag = #{teachFlag,jdbcType=INTEGER},
+      retire_flag = #{retireFlag,jdbcType=INTEGER},
+      cert_flag = #{certFlag,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      last_modify_user_id = #{lastModifyUserId,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+      logic_delete = #{logicDelete,jdbcType=INTEGER}
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="queryByCondition" parameterType="map" resultMap="BaseResultMap">
+  	select 
+  	_tch.user_id, _tch.pinyin, _tch.jianpin, _tch.gender, _tch.post_title, _tch.department_id, _tch.post_type_id, _tch.staff_type_id, 
+    _tch.post_level_id, _tch.teach_flag, _tch.retire_flag, _tch.cert_flag, _tch.status,
+	_user.username,
+	_user.user_no,
+	_dep.title
+  	from edu_tch_employee _tch 
+  	inner join sys_user _user on _tch.user_id = _user.id
+  	inner join dict_edu_common_department _dep on _tch.department_id = _dep.id
+    where 1 = 1 
+    <if test="departmentId != null " >
+    and _tch.department_id=#{departmentId}
+    </if>
+	and _tch.logic_delete = 0
+	${searchCondition}
+    <if test="searchCondition == null and defaultSortField != null" >
+      order by ${defaultSortField}
+    </if>
+	limit #{limitStart}, #{limitEnd}
+  </select>
+  
+  
+  <select id="countByCondition" parameterType="map" resultType="java.lang.Integer">
+  	select 
+	count(_tch.user_id)
+  	from edu_tch_employee _tch 
+  	inner join sys_user _user on _tch.user_id = _user.id
+  	inner join dict_edu_common_department _dep on _tch.department_id = _dep.id
+    where 1 = 1 
+    <if test="departmentId != null " >
+    and _tch.department_id=#{departmentId}
+    </if>
+	and _tch.logic_delete = 0
+	${searchCondition}
+  </select>
+  
+   <select id="detail" parameterType="java.lang.Integer" resultMap="BaseResultMap" >
+	select 
+	_tch.user_id, _tch.pinyin, _tch.jianpin, _tch.gender, _tch.post_title, _tch.department_id, _tch.post_type_id, _tch.staff_type_id, 
+    _tch.post_level_id, _tch.teach_flag, _tch.retire_flag, _tch.cert_flag, _tch.status,
+	_user.username,
+	_user.user_no,
+	_dep.title
+	from edu_tch_employee _tch 
+  	inner join sys_user _user on _tch.user_id = _user.id
+  	inner join dict_edu_common_department _dep on _tch.department_id = _dep.id
+    where 1 = 1 
+	and _tch.logic_delete = 0
+	and _tch.user_id = #{userId, jdbcType=INTEGER}
+  </select>
+  
+  
+  
+   <select id="listRecursionByDepartmentId" parameterType="map" resultMap="BaseResultMap">
+  	select 
+  	_tch.user_id, _tch.pinyin, _tch.jianpin, _tch.gender, _tch.post_title, _tch.department_id, _tch.post_type_id, _tch.staff_type_id, 
+    _tch.post_level_id, _tch.teach_flag, _tch.retire_flag, _tch.cert_flag, _tch.status,
+	_user.username,
+	_user.user_no,
+	_dep.title
+  	from edu_tch_employee _tch 
+  	inner join sys_user _user on _tch.user_id = _user.id
+  	inner join dict_edu_common_department _dep on _tch.department_id = _dep.id
+    where 1 = 1 
+	and _tch.logic_delete = 0
+	${searchCondition}
+	 <if test="linkedListDepartmentId != null and listRecursionByDepartmentId!='' " >
+		and  _tch.department_id in 
+        <foreach collection="linkedListDepartmentId" item="listItem" open="(" close=")" separator="," >
+          #{listItem}
+        </foreach>
+      </if>            
+    <if test="searchCondition == null and defaultSortField != null" >
+      order by ${defaultSortField}
+    </if>
+	limit #{limitStart}, #{limitEnd}
+  </select>
+  
+  <select id="countListRecursionByDepartmentId" parameterType="map" resultType="java.lang.Integer">
+  	select 
+	count(_tch.user_id)
+  	from edu_tch_employee _tch 
+  	inner join sys_user _user on _tch.user_id = _user.id
+  	inner join dict_edu_common_department _dep on _tch.department_id = _dep.id
+    where 1 = 1 
+	and _tch.logic_delete = 0
+	${searchCondition}
+	 <if test="linkedListDepartmentId != null and listRecursionByDepartmentId!=''  " >
+		and  _tch.department_id in 
+       <foreach collection="linkedListDepartmentId" item="listItem" open="(" close=")" separator="," >
+         #{listItem}
+       </foreach>
+     </if> 
+  </select>
+  
+</mapper>

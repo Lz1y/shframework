@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/2002/xmlspec/dtd/2.10/xmlspec.dtd">
+<portable-config>
+	<config-file path="WEB-INF/classes/cfg/config.properties">
+		<replace key="file.root.savepath">d:/tmsstatic/</replace>
+		<replace key="tomcat.vm.directory.tms.static">http://192.168.1.211:48080/tmsstatic/</replace>
+		<!--单点登录配置参数  Begin-->
+		<replace key="sys.login.verify.timeout">300</replace>
+		<!-- url参数跳转标识 0-不跳转 1-跳转 -->
+		<replace key="sys.login.zfsso.url.flag">0</replace>
+		<!-- 握手密码  -->
+		<replace key="sys.login.zfssokey">14LFkVq/h2bD+4S4E5ddM+sNyOy/PkTN</replace>
+		<!--单点登录配置参数  End-->
+	</config-file>
+	<config-file path="WEB-INF/classes/db/jdbc/jdbc.properties">
+		<replace key="app.jdbc.url">68eQRu8OgyxvgQgskWDaRPc5xtlFxUflT6hvZo4o2OdKF2VFCDKxJ4LvibC08UD3YZp9mS1R8co3obSNClVo9pjkLLsMtZsFgaGp/Ch1VfrS2X7lSSBltA==</replace>
+		<replace key="app.jdbc.username">Wx1YAZ46SlW7mqy6EXm6uQ==</replace>
+		<replace key="app.jdbc.password">naQKr0LK2xUKuGjCMmjLgQ==</replace>
+	</config-file>
+	<config-file path="WEB-INF/classes/log/logback.properties">
+		<replace key="log.rootRolling.appender.File">d:/Server48080/logs/tms/tms_root.log</replace>
+		<replace key="log.rootRolling.appender.rollingPolicy.FileNamePattern">d:/Server48080/logs/tms/tms_root.%d{yyyy-MM-dd}.log</replace>
+		<replace key="log.dailyRolling.appender.File">d:/Server48080/logs/tms/tms_info.log</replace>
+		<replace key="log.dailyRolling.appender.rollingPolicy.FileNamePattern">d:/Server48080/logs/tms/tms_info.%d{yyyy-MM-dd}.log</replace>
+		<replace key="log.access.appender.File">d:/Server48080/logs/tms/tms_access.log</replace>
+		<replace key="log.access.appender.rollingPolicy.FileNamePattern">d:/Server48080/logs/tms/tms_access.%d{yyyy-MM-dd}.log</replace>
+		<replace key="log.error.appender.File">d:/Server48080/logs/tms/tms_error.log</replace>
+		<replace key="log.error.appender.rollingPolicy.FileNamePattern">d:/Server48080/logs/tms/tms_error.%d{yyyy-MM-dd}.log</replace>
+		<replace key="log.root.level">ERROR</replace>
+		<replace key="log.com.shframework.level">ERROR</replace>
+		<replace key="log.com.shframework.common.interceptor.level">INFO</replace>
+	</config-file>
+	<config-file path="WEB-INF/classes/redis/redis.properties">
+		<replace key="redis.host">192.168.1.211</replace>
+		<replace key="redis.port">6379</replace>
+		<replace key="redis.pass"></replace>
+	</config-file>
+	<config-file path="resources/i18n/path.properties">
+		<replace key="async.req.path">http://192.168.1.211:48080/async/conn</replace>
+	</config-file>
+	<config-file path="WEB-INF/classes/shiro/shiro.properties">
+		<!-- 登录loginUrl 非单点：login 单点：loginsso  -->
+		<replace key="loginUrl">/login</replace>
+	</config-file>	
+</portable-config>

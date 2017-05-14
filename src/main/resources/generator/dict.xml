@@ -1,0 +1,438 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+
+	<!-- classPathEntry:jdbc driver -->
+	<classPathEntry location="D:\software Pool\7-MybatisGeneratorTest\mysql-connector-java-5.1.22-bin.jar" />
+	
+	<context id="DB2Tables" targetRuntime="MyBatis3">
+		
+		<plugin type="org.mybatis.generator.plugins.CaseInsensitiveLikePlugin"></plugin>  
+		<plugin type="org.mybatis.generator.plugins.SerializablePlugin"></plugin>  
+		<plugin type="com.shframework.modules.dict.plugin.MySqlPaginationPlugin"></plugin>  
+	
+		<commentGenerator>
+			<property name="suppressAllComments" value="true" />
+			<property name="suppressDate" value="true" />
+		</commentGenerator>
+		
+		<!-- JDBC -->
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://localhost:3306/tms" userId="root" password="" />
+		
+		<javaTypeResolver >
+			<property name="forceBigDecimals" value="false" />
+		</javaTypeResolver>
+		
+		<!-- targetProject:code path-->
+		<javaModelGenerator targetPackage="com.shframework.modules.dict.entity" targetProject="C:\123\src">
+			<property name="enableSubPackages" value="true" />
+			<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+		
+		<sqlMapGenerator targetPackage="com.shframework.modules.dict.mapper"  targetProject="C:\123\src">
+			<property name="enableSubPackages" value="true" />
+		</sqlMapGenerator>
+		
+		
+		<javaClientGenerator type="XMLMAPPER" targetPackage="com.shframework.modules.dict.mapper"  targetProject="C:\123\src">
+			<property name="enableSubPackages" value="true" />
+		</javaClientGenerator>
+		
+		<!-- tableName:database table_name; domainObjectName:javabean -->
+		
+		
+		<table tableName="dict_edu_common_major" domainObjectName="DictEduCommonMajor"></table>
+		<table tableName="dict_edu_common_major_department" domainObjectName="DictEduCommonMajorDepartment"></table>
+		
+		
+		<!-- 
+		
+		<table tableName="T_JW_ZD_GG_GJ" domainObjectName="DictCommonNation">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_GG_MZ" domainObjectName="DictCommonEthnicity">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_GG_ZZMM" domainObjectName="DictCommonPolicitalStatus">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="JC" property="shortName"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_GG_XZQH" domainObjectName="DictCommonArea">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_GG_ZJLX" domainObjectName="DictCommonCert">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_GG_YX" domainObjectName="DictEduCommonCollege">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="LB" property="type"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_GG_XQ" domainObjectName="DictEduCommonCampus">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="DZ" property="address"/>
+			<columnOverride column="LXDH" property="tel"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_GG_XB" domainObjectName="DictEduCommonDepartment">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="FLS" property="parentId"/>
+			<columnOverride column="SFZJD" property="hasChild"/>
+			<columnOverride column="XQLS" property="campusId"/>
+			<columnOverride column="FZR" property="principal"/>
+			<columnOverride column="LB" property="type"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_GG_ZYML" domainObjectName="DictEduCommonCategoryMajor">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_GG_ZYDL" domainObjectName="DictEduCommonGroupMajor">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="ZYMLLS" property="categoryId"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_GG_ZY" domainObjectName="DictEduCommonMajor">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="ZYDLLS" property="groupId"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="KBRQ" property="startDate"/>
+			<columnOverride column="LB" property="type"/>
+			<columnOverride column="YGXX" property="reformationInfo"/>
+			<columnOverride column="MS" property="description"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_GG_ZYXB" domainObjectName="DictEduCommonMajorDepartment">
+			<columnOverride column="ZYLS" property="majorId"/>
+			<columnOverride column="XBLS" property="departmentId"/>
+			<columnOverride column="XNBM" property="innerCode"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_GG_ZYFX" domainObjectName="DictEduCommonMajorField">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="ZYLS" property="majorId"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_GG_XN" domainObjectName="DictEduCommonAcademicYear">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_GG_XQI" domainObjectName="DictEduCommonTerm">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_GG_XNXQ" domainObjectName="DictEduCommonAcdYearTerm">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="XNLS" property="academicYearId"/>
+			<columnOverride column="XQILS" property="termId"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="XQZS" property="termWeeks"/>
+			<columnOverride column="JXKCZS" property="deductWeeks"/>
+			<columnOverride column="KSRQ" property="startDate"/>
+			<columnOverride column="JSRQ" property="endDate"/>
+			<columnOverride column="BZ" property="notes"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_GG_XL" domainObjectName="DictEduCommonDiploma">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_GG_XW" domainObjectName="DictEduCommonDegree">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_GG_XZ" domainObjectName="DictEduCommonEduSystem">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_GG_BQ" domainObjectName="DictEduCommonLabel">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="LX" property="type"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_XJ_XSJD" domainObjectName="DictEduRollGradation">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_XJ_PYCC" domainObjectName="DictEduRollTrainingLevel">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_XJ_XLCC" domainObjectName="DictEduRollDiplomaLevel">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_XJ_PYFS" domainObjectName="DictEduRollTrainingMode">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_XJ_XXXS" domainObjectName="DictEduRollStudyMode">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_XJ_KL" domainObjectName="DictEduRollSubject">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+	
+		<table tableName="T_JW_ZD_JW_XJ_SY" domainObjectName="DictEduRollLocal">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_XJ_XSLY" domainObjectName="DictEduRollComeFrom">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_XJ_KSLB" domainObjectName="DictEduRollCandidateType">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_XJ_ZSLY" domainObjectName="DictEduRollEnrollFrom">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_XJ_RXQD" domainObjectName="DictEduRollEnrollCode">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_XJ_LQLB" domainObjectName="DictEduRollEnrollType">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_XJ_XJYDLB" domainObjectName="DictEduRollRollChangeType">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		
+		<table tableName="T_JW_ZD_JW_XJ_XJYDYY" domainObjectName="DictEduRollRollChangeReason">
+			<columnOverride column="LS" property="id"/>
+			<columnOverride column="DM" property="code"/>
+			<columnOverride column="MC" property="title"/>
+			<columnOverride column="XSCX" property="priority"/>
+			<columnOverride column="ZT" property="status"/>
+			<columnOverride column="SD" property="locked"/>
+			<columnOverride column="BZN" property="standard"/>
+			<columnOverride column="LJSC" property="logicDelete"/>
+		</table>
+		-->
+	</context>
+		
+</generatorConfiguration>
+

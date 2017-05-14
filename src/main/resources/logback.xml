@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+	<!--  <property resource="db/jdbc/jdbc.properties" /> -->
+	<property resource="log/logback.properties" />
+	
+	<!-- log output to console -->
+	<appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{64} - %msg%n</Pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>TRACE</level>
+		</filter>
+	</appender>
+
+	<!-- log output to file -->
+  	<appender name="rootRollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${log.rootRolling.appender.File}</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+		    <!-- daily rollover -->
+			<FileNamePattern>${log.rootRolling.appender.rollingPolicy.FileNamePattern}</FileNamePattern>
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>${log.rootRolling.appender.rollingPolicy.maxHistory}</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{64} - %msg%n</Pattern>
+		</encoder> 	    
+  	</appender>
+
+	<!-- log output to file -->
+  	<appender name="dailyRollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${log.dailyRolling.appender.File}</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+		    <!-- daily rollover -->
+			<FileNamePattern>${log.dailyRolling.appender.rollingPolicy.FileNamePattern}</FileNamePattern>
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>${log.dailyRolling.appender.rollingPolicy.maxHistory}</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{64} - %msg%n</Pattern>
+		</encoder> 	    
+  	</appender>
+  	
+	<!-- log output to file -->
+  	<appender name="accessFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${log.access.appender.File}</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+		    <!-- daily rollover -->
+			<FileNamePattern>${log.access.appender.rollingPolicy.FileNamePattern}</FileNamePattern>
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>${log.access.appender.rollingPolicy.maxHistory}</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{64} - %msg%n</Pattern>
+		</encoder> 	    
+  	</appender>
+  	
+  	<!-- error log output to file add by rwz -->
+  	<appender name="errorFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${log.error.appender.File}</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+		    <!-- daily rollover -->
+			<FileNamePattern>${log.error.appender.rollingPolicy.FileNamePattern}</FileNamePattern>
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>${log.error.appender.rollingPolicy.maxHistory}</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{64} - %msg%n</Pattern>
+		</encoder> 	
+		<filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印错误日志 -->  
+            <level>ERROR</level>  
+            <onMatch>ACCEPT</onMatch>  
+            <onMismatch>DENY</onMismatch>  
+        </filter>     
+  	</appender>
+  	
+  	<!--  log output to db -->
+  	<!--
+	<appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
+		<connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">
+			<dataSource class="com.alibaba.druid.pool.DruidDataSource">
+				<driverClass>${app.jdbc.driverClassName}</driverClass>
+				<url>${app.jdbc.url}</url>
+				<user>${app.jdbc.username}</user>
+				<password>${app.jdbc.password}</password>
+			</dataSource>
+		</connectionSource>
+	</appender>
+	-->
+
+	<logger name="com.shframework.common.interceptor" additivity="false">
+	    <level value="${log.com.shframework.common.interceptor.level}" />
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="dailyRollingFileAppender" />
+		<appender-ref ref="accessFileAppender" />
+	</logger>
+	
+	<logger name="com.shtd" additivity="false">
+	    <level value="${log.com.shframework.level}" />
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="errorFileAppender"/>
+	</logger>
+	
+	<root>
+		<level value="${log.root.level}" />
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="rootRollingFileAppender"/>
+		<appender-ref ref="errorFileAppender"/>
+	</root>
+</configuration>

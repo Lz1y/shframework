@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shframework.modules.sys.mapper.SrrpMapper" >
+  <resultMap id="BaseResultMap" type="srrp" >
+    <id column="role_id" property="roleId" jdbcType="INTEGER" />
+    <id column="resource_id" property="resourceId" jdbcType="INTEGER" />
+    <id column="permission_id" property="permissionId" jdbcType="INTEGER" />
+    <id column="scope" property="scope" jdbcType="INTEGER" />
+    <result column="custom_id" property="customId" jdbcType="INTEGER" />
+    <result column="mode" property="mode" jdbcType="INTEGER" />
+	<association property="role" column="role_id" javaType="role" >
+	  <id column="role_id" property="id" jdbcType="INTEGER" />
+	  <result column="title" property="title" jdbcType="VARCHAR" />
+	  <result column="code" property="code" jdbcType="VARCHAR" />
+	  <result column="priority" property="priority" jdbcType="INTEGER" />
+	  <result column="description" property="description" jdbcType="VARCHAR" />
+	  <result column="last_modify_user_id" property="lastModifyUserId" jdbcType="INTEGER" />
+	  <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+	  <result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
+	  <result column="status" property="status" jdbcType="INTEGER" />
+	  <result column="locked" property="locked" jdbcType="INTEGER" />
+	  <result column="logic_delete" property="logicDelete" jdbcType="INTEGER" />
+	</association>
+	<association property="resource" column="resource_id" javaType="resource">
+	  <id column="resource_id" property="id" jdbcType="INTEGER" />
+	  <result column="title" property="title" jdbcType="VARCHAR" />
+	  <result column="rule" property="rule" jdbcType="VARCHAR" />
+	  <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+	  <result column="has_child" property="hasChild" jdbcType="INTEGER" />
+	  <result column="url" property="url" jdbcType="VARCHAR" />
+	  <result column="priority" property="priority" jdbcType="INTEGER" />
+	  <result column="description" property="description" jdbcType="VARCHAR" />
+	  <result column="last_modify_user_id" property="lastModifyUserId" jdbcType="INTEGER" />
+	  <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+	  <result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
+	  <result column="status" property="status" jdbcType="INTEGER" />
+	  <result column="locked" property="locked" jdbcType="INTEGER" />
+	</association>
+	<association property="permission" column="permission_id" javaType="permission">
+	  <id column="permission_id" property="id" jdbcType="INTEGER" />
+	  <result column="title" property="title" jdbcType="VARCHAR" />
+	  <result column="code" property="code" jdbcType="VARCHAR" />
+	  <result column="priority" property="priority" jdbcType="INTEGER" />
+	  <result column="description" property="description" jdbcType="VARCHAR" />
+	  <result column="last_modify_user_id" property="lastModifyUserId" jdbcType="INTEGER" />
+	  <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+	  <result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
+	  <result column="status" property="status" jdbcType="INTEGER" />
+	  <result column="locked" property="locked" jdbcType="INTEGER" />
+	  <result column="logic_delete" property="logicDelete" jdbcType="INTEGER" />
+	</association>
+  </resultMap>
+  
+  <resultMap id="ShiroPermissionMap" type="com.shframework.modules.sys.entity.vo.ShiroPermissionVo" >
+    <id column="rule" property="rule" jdbcType="VARCHAR" />
+    <id column="spCode" property="spCode" jdbcType="VARCHAR" />
+    <id column="scope" property="scope" jdbcType="INTEGER" />
+    <id column="rCode" property="rCode" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="execute" parameterType="java.lang.String" resultType="java.lang.Integer">
+  	${_parameter}
+  </select>
+  
+  <select id="getResourceScopeByUsername" parameterType="java.lang.String" resultMap="ShiroPermissionMap">
+	select 
+		distinct _rr.rule, _srrp.scope
+	from 
+	sys_role_resource_permission _srrp
+	inner join (
+		select 
+			_srr.role_id, _srr.resource_id, _sr.rule
+		from sys_user _su
+			inner join sys_user_role _sur on _su.id = _sur.user_id 
+			inner join sys_role_resource _srr on _sur.role_id = _srr.role_id
+			inner join sys_resource _sr on _sr.id = _srr.resource_id
+		where 1 = 1
+			and _su.username = #{username}
+			group by resource_id 
+	) _rr on _rr.role_id = _srrp.role_id
+		
+  </select>
+  
+  <select id="getPermissionsByUsername" parameterType="map" resultMap="ShiroPermissionMap">
+	select sr.rule, sp.`code` as spCode, srrp.scope, r.code as rCode
+	from sys_role_resource_permission srrp 
+	inner join sys_role r on srrp.role_id = r.id 
+	inner join sys_resource sr on srrp.resource_id = sr.id 
+	inner join sys_permission sp on srrp.permission_id = sp.id 
+	inner join sys_user_role sur on r.id = sur.role_id 
+	inner join sys_user su on sur.user_id = su.id 
+	where su.username = #{username}
+	order by srrp.scope desc
+  </select>
+  
+  <select id="permissions" parameterType="map" resultMap="ShiroPermissionMap">
+	select 
+		distinct sr.rule, sp.`code` as spCode, srrp.scope, r.code as rCode
+	from 
+	sys_role_resource_permission srrp
+	inner join sys_role r on srrp.role_id = r.id 
+	inner join sys_resource sr on srrp.resource_id = sr.id 
+	inner join sys_permission sp on srrp.permission_id = sp.id 
+	inner join (
+		select 
+			<if test="list != null">
+		  		<foreach collection="list" item="item" open="case">
+					<if test="item != null">
+						when _srr.resource_id = (
+							select resource_id from sys_role_resource where role_id = #{item}
+						) then #{item} 
+					</if>
+		        </foreach>
+				else _srr.role_id end as role_id
+			</if>
+			<if test="list == null">
+				_srr.role_id
+			</if>
+		from sys_user _su
+			inner join sys_user_role _sur on _su.id = _sur.user_id 
+			inner join sys_role_resource _srr on _sur.role_id = _srr.role_id
+		where 1 = 1
+			and _su.id = #{userId}
+			group by resource_id 
+	) _rr on _rr.role_id = srrp.role_id
+		
+  </select>
+  
+  <select id="getScopeByUsername" parameterType="java.lang.String" resultType="java.lang.Integer">
+  	select scope from sys_role_resource_permission _srrp
+	left join sys_user_role _sur on _srrp.role_id = _sur.role_id
+	inner join sys_user _su on _sur.user_id = _su.id
+	inner join sys_resource _r on = _srrp.resource_id = _r.id
+	where 1 = 1 
+	and _su.username = #{username}
+	and _r.rule = #{rule}
+  </select>
+  
+  <select id="getScopeByRoleAndResource" parameterType="map" resultType="java.lang.Integer">
+  	select scope from sys_role_resource_permission where role_id = #{roleId} and resource_id = #{resourceId}
+  </select>
+  
+  <select id="getRulesByUsername" parameterType="java.lang.String" resultType="java.lang.String">
+	select distinct(sr.rule)
+	from sys_role_resource_permission srrp 
+	inner join sys_resource sr on srrp.resource_id = sr.id 
+	inner join sys_role r on srrp.role_id = r.id 
+	inner join sys_user_role sur on r.id = sur.role_id 
+	inner join sys_user su on sur.user_id = su.id 
+	where su.username = #{username}
+  </select>
+  
+  <select id="querySrrpByRoleId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  	select 
+  	*
+	from sys_role_resource_permission srrp 
+	left join sys_role role on srrp.role_id = role.id 
+	left join sys_resource resource on srrp.resource_id = resource.id 
+	left join sys_permission permission on srrp.permission_id = permission.id 
+  	where srrp.role_id = #{roleid, jdbcType=INTEGER}
+  </select>
+  
+  <!-- 
+  List<Srrp> querySrrpByRoleIdAndResIdList(@Param("roleId") int roleid, @Param("resIdList") List<Integer> resIdList);
+   -->
+   <select id="querySrrpByRoleIdAndResIdList" resultMap="BaseResultMap" parameterType="map">
+  	select 
+  	*
+	from sys_role_resource_permission srrp 
+	left join sys_role role on srrp.role_id = role.id 
+	left join sys_resource resource on srrp.resource_id = resource.id 
+	left join sys_permission permission on srrp.permission_id = permission.id 
+  	where srrp.role_id = #{roleid, jdbcType=INTEGER}
+  		and (srrp.resource_id in 
+  		<foreach collection="resIdList" item="listItem" open="(" close=")" separator="," >
+            #{listItem}
+        </foreach>
+        or srrp.resource_id = 1
+        )
+  </select>
+  
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    role_id, resource_id, permission_id, scope, custom_id, mode
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shframework.modules.sys.entity.SrrpExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sys_role_resource_permission
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <choose >
+      <when test="limitStart != -1 and limitEnd != -1" >
+        limit ${limitStart} , ${limitEnd}
+      </when>
+      <when test="limitStart != -1" >
+        limit ${limitStart}
+      </when>
+    </choose>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.shframework.modules.sys.entity.SrrpKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_role_resource_permission
+    where role_id = #{roleId,jdbcType=INTEGER}
+      and resource_id = #{resourceId,jdbcType=INTEGER}
+      and permission_id = #{permissionId,jdbcType=INTEGER}
+      and scope = #{scope,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.shframework.modules.sys.entity.SrrpKey" >
+    delete from sys_role_resource_permission
+    where role_id = #{roleId,jdbcType=INTEGER}
+      and resource_id = #{resourceId,jdbcType=INTEGER}
+      and permission_id = #{permissionId,jdbcType=INTEGER}
+      and scope = #{scope,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shframework.modules.sys.entity.SrrpExample" >
+    delete from sys_role_resource_permission
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shframework.modules.sys.entity.Srrp" >
+    insert into sys_role_resource_permission (role_id, resource_id, permission_id, 
+      scope, custom_id, mode
+      )
+    values (#{roleId,jdbcType=INTEGER}, #{resourceId,jdbcType=INTEGER}, #{permissionId,jdbcType=INTEGER}, 
+      #{scope,jdbcType=INTEGER}, #{customId,jdbcType=INTEGER}, #{mode,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.shframework.modules.sys.entity.Srrp" >
+    insert into sys_role_resource_permission
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="roleId != null" >
+        role_id,
+      </if>
+      <if test="resourceId != null" >
+        resource_id,
+      </if>
+      <if test="permissionId != null" >
+        permission_id,
+      </if>
+      <if test="scope != null" >
+        scope,
+      </if>
+      <if test="customId != null" >
+        custom_id,
+      </if>
+      <if test="mode != null" >
+        mode,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="roleId != null" >
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="resourceId != null" >
+        #{resourceId,jdbcType=INTEGER},
+      </if>
+      <if test="permissionId != null" >
+        #{permissionId,jdbcType=INTEGER},
+      </if>
+      <if test="scope != null" >
+        #{scope,jdbcType=INTEGER},
+      </if>
+      <if test="customId != null" >
+        #{customId,jdbcType=INTEGER},
+      </if>
+      <if test="mode != null" >
+        #{mode,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shframework.modules.sys.entity.SrrpExample" resultType="java.lang.Integer" >
+    select count(*) from sys_role_resource_permission
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update sys_role_resource_permission
+    <set >
+      <if test="record.roleId != null" >
+        role_id = #{record.roleId,jdbcType=INTEGER},
+      </if>
+      <if test="record.resourceId != null" >
+        resource_id = #{record.resourceId,jdbcType=INTEGER},
+      </if>
+      <if test="record.permissionId != null" >
+        permission_id = #{record.permissionId,jdbcType=INTEGER},
+      </if>
+      <if test="record.scope != null" >
+        scope = #{record.scope,jdbcType=INTEGER},
+      </if>
+      <if test="record.customId != null" >
+        custom_id = #{record.customId,jdbcType=INTEGER},
+      </if>
+      <if test="record.mode != null" >
+        mode = #{record.mode,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update sys_role_resource_permission
+    set role_id = #{record.roleId,jdbcType=INTEGER},
+      resource_id = #{record.resourceId,jdbcType=INTEGER},
+      permission_id = #{record.permissionId,jdbcType=INTEGER},
+      scope = #{record.scope,jdbcType=INTEGER},
+      custom_id = #{record.customId,jdbcType=INTEGER},
+      mode = #{record.mode,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shframework.modules.sys.entity.Srrp" >
+    update sys_role_resource_permission
+    <set >
+      <if test="customId != null" >
+        custom_id = #{customId,jdbcType=INTEGER},
+      </if>
+      <if test="mode != null" >
+        mode = #{mode,jdbcType=INTEGER},
+      </if>
+    </set>
+    where role_id = #{roleId,jdbcType=INTEGER}
+      and resource_id = #{resourceId,jdbcType=INTEGER}
+      and permission_id = #{permissionId,jdbcType=INTEGER}
+      and scope = #{scope,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shframework.modules.sys.entity.Srrp" >
+    update sys_role_resource_permission
+    set custom_id = #{customId,jdbcType=INTEGER},
+      mode = #{mode,jdbcType=INTEGER}
+    where role_id = #{roleId,jdbcType=INTEGER}
+      and resource_id = #{resourceId,jdbcType=INTEGER}
+      and permission_id = #{permissionId,jdbcType=INTEGER}
+      and scope = #{scope,jdbcType=INTEGER}
+  </update>
+</mapper>

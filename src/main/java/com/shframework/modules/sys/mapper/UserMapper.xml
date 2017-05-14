@@ -1,0 +1,632 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shframework.modules.sys.mapper.UserMapper" >
+  <resultMap id="BaseResultMap" type="user" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_no" property="userNo" jdbcType="VARCHAR" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="salt" property="salt" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="session_id" property="sessionId" jdbcType="VARCHAR" />
+    <result column="token" property="token" jdbcType="VARCHAR" />
+    <result column="last_modify_user_id" property="lastModifyUserId" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="locked" property="locked" jdbcType="INTEGER" />
+    <result column="logic_delete" property="logicDelete" jdbcType="INTEGER" />
+    <result column="user_role" property="userRole" jdbcType="INTEGER" />
+	<association property="employee" column="user_id" javaType="eduTchEmployee" >
+	  <id column="user_id" property="userId" jdbcType="INTEGER" />
+	  <result column="pinyin" property="pinyin" jdbcType="VARCHAR" />
+	  <result column="jianpin" property="jianpin" jdbcType="VARCHAR" />
+	  <result column="gender" property="gender" jdbcType="INTEGER" />
+	  <result column="post_title" property="postTitle" jdbcType="VARCHAR" />
+	  <result column="department_id" property="departmentId" jdbcType="INTEGER" />
+	  <result column="post_type_id" property="postTypeId" jdbcType="INTEGER" />
+	  <result column="staff_type_id" property="staffTypeId" jdbcType="INTEGER" />
+	  <result column="post_level_id" property="postLevelId" jdbcType="INTEGER" />
+	  <result column="teach_flag" property="teachFlag" jdbcType="INTEGER" />
+	  <result column="retire_flag" property="retireFlag" jdbcType="INTEGER" />
+    </association>
+	<association property="campus" column="campus_id" javaType="dictEduCommonCampus" >
+	  <id column="campus_id" property="id" jdbcType="INTEGER" />
+	  <result column="campus_code" property="code" jdbcType="VARCHAR" />
+	</association>
+	<collection property="roles" ofType="role" >
+	  <id column="role_id" property="id" jdbcType="INTEGER" />
+	  <result column="title" property="title" jdbcType="VARCHAR" />
+	  <result column="code" property="code" jdbcType="VARCHAR" />
+	</collection>
+	<collection property="majorFieldList" ofType="dictEduCommonMajorField" >
+	  <id column="majorFieldId" property="id" jdbcType="INTEGER" />
+	  <result column="majorFieldTitle" property="title" jdbcType="VARCHAR" />
+	</collection>
+  </resultMap>
+  
+  <select id="queryIdList" resultType="java.lang.String">
+  	select id from sys_user
+  </select>
+  
+  <select id="getId" resultType="java.lang.String">
+  	select id from sys_user 
+  	<where>
+  		<if test="username != null">
+  			and (username = #{username} or user_no = #{username})
+  		</if>
+  	</where>
+  </select>
+  
+  <select id="passwordIsNotNull" resultMap="BaseResultMap">
+  	select 
+	  	_su.id, 
+	  	_su.username,
+	  	
+		_emp.user_id, 
+		_emp.department_id,
+		
+		_cps.id as campus_id
+  	from sys_user _su
+		inner join edu_tch_employee _emp on _emp.user_id = _su.id
+		inner join dict_edu_common_department _dep on _emp.department_id = _dep.id 
+		inner join dict_edu_common_campus _cps on _dep.campus_id = _cps.id
+  	where _su.password is not null and _su.user_role = 0
+  </select>
+
+	<select id="queryUserRoleList" resultMap="BaseResultMap" parameterType="map">  
+		select
+    	    _su.id, _su.user_no, _su.username, _su.email, _su.mobile, _su.last_modify_user_id, 
+   			_su.create_date, _su.modify_date, _su.status, _su.locked, _su.logic_delete
+		from sys_user _su
+		   inner join edu_tch_employee as _ete on _su.id=_ete.user_id
+		<where>
+		${searchCondition}
+		and _su.logic_delete = 0
+		</where>
+	    <if test="searchCondition == null and defaultSortField != null" >
+	      order by ${defaultSortField}
+	    </if>
+		limit #{limitStart}, #{limitEnd}
+	</select>
+	
+    <select id="queryUserRoleListCount" parameterType="map" resultType="java.lang.Integer">
+		select
+		count(_su.id)
+		from sys_user _su
+			inner join edu_tch_employee as _ete on _su.id=_ete.user_id
+		<where>
+		${searchCondition}
+		and _su.logic_delete = 0
+		</where>
+	    <if test="searchCondition == null and defaultSortField != null" >
+	      order by ${defaultSortField}
+	    </if>
+    </select>
+    
+    <!-- 
+    /**
+	 * 根据角色code 获取所有具有指定角色的用户的id
+	 * @author RanWeizheng
+	 * @return
+	 */
+     -->
+     <select id="getUserIdListByRoleCode" parameterType="java.lang.String" resultType="java.lang.Integer">
+     SELECT
+			_su.id
+		FROM
+			sys_user _su
+			inner JOIN sys_user_role _sur ON _su.id = _sur.user_id
+			inner JOIN sys_role _sr ON _sur.role_id = _sr.id and _sr.code=#{0}
+			WHERE
+		_su.logic_delete = 0
+     </select>
+     
+   <!-- 
+   /**
+	 * 根据角色id 获取所有具有指定角色的用户的id
+	 * @author RanWeizheng
+	 * @return
+	 */
+     -->
+     <select id="getUserIdListByRoleId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    SELECT
+			_su.id
+		FROM
+			sys_user _su
+				INNER JOIN sys_user_role _sur ON _su.id = _sur.user_id
+			WHERE
+			_su.logic_delete = 0
+			AND _sur.role_id =#{0}
+     </select>
+	
+	<select id="queryUserRoleById" resultMap="BaseResultMap" parameterType="java.lang.Integer">  
+		select
+		su.id,
+		su.username,
+		sr.id as role_id,
+		sr.title,
+		sr.code
+		from sys_user su
+		inner join sys_user_role sur on su.id = sur.user_id
+		inner join sys_role sr on sur.role_id = sr.id
+		where su.id = #{id,jdbcType=INTEGER}
+		and sr.logic_delete=0
+	</select>
+	
+	<select id="getUser" parameterType="int" resultType="user">
+		SELECT id, username, email, mobile FROM sys_user WHERE id = #{id}
+	</select>
+	
+	<insert id="saveUser" parameterType="user">
+		INSERT INTO sys_user (id, username, password, email, mobile, salt, create_date, status) 
+    	VALUE (#{id}, #{username}, #{password}, #{email}, #{mobile}, #{salt}, #{createDate}, #{status})
+	</insert>
+	
+	<update id="updateUser" parameterType="user"> 
+  		UPDATE sys_user
+  		SET
+  			username = #{username},  
+			email = #{email},
+			session_id = #{sessionId},
+			mobile = #{mobile}
+  		where id = #{id} 
+	</update>
+	
+	<delete id="deleteUser" parameterType="int">
+    	DELETE FROM sys_user
+    	WHERE id = #{id}
+    </delete>
+    
+    <select id="queryUser" resultMap="BaseResultMap">
+		select 
+		_su.id, 
+		
+		_su.user_no, 
+		_su.username, 
+		_su.password, 
+		_su.salt, 
+		_su.email,
+		_su.mobile, 
+		_su.last_modify_user_id, 
+		_su.create_date, 
+    	_su.modify_date, 
+    	_su.status, 
+    	_su.locked, 
+    	_su.logic_delete,
+    	
+		_emp.user_id,
+		_emp.pinyin,
+		_emp.jianpin,
+		_emp.gender,
+		_emp.post_title,
+		_emp.department_id,
+		_emp.post_type_id,
+		_emp.staff_type_id,
+		_emp.post_level_id,
+		_emp.teach_flag,
+		_emp.retire_flag,
+		
+		_cps.id as campus_id,
+		_cps.code as campus_code,
+		
+		_role.id as role_id,
+		_role.title,
+		_role.code,
+		
+		_decmf.id AS majorFieldId,
+		_decmf.title AS majorFieldTitle
+		
+		from sys_user _su
+		left join sys_user_role _sur on _su.id = _sur.user_id 
+		left join sys_role _role on _sur.role_id = _role.id and _role.logic_delete = 0 and _role.status=1
+		left join sys_role_resource _srr on _srr.role_id = _role.id
+		left join sys_resource _sr on _sr.id = _srr.resource_id
+		
+		inner join edu_tch_employee _emp on _emp.user_id = _su.id and _emp.logic_delete = 0
+		inner join dict_edu_common_department _dep on _emp.department_id = _dep.id 
+		inner join dict_edu_common_campus _cps on _dep.campus_id = _cps.id
+		
+		left join dict_edu_common_major_field _decmf ON _su.id = _decmf.principal
+		where 1 = 1
+		and _su.logic_delete = 0
+		and _su.`status` = 1
+		and _emp.`status` = 1
+		<if test="username != null">
+			and (_su.username = #{username} or _su.user_no = #{username})
+		</if>
+		order by _sr.priority DESC
+    </select>
+    
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, user_no, username, password, salt, email, mobile, session_id, token, last_modify_user_id, 
+    create_date, modify_date, status, locked, logic_delete, user_role
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shframework.modules.sys.entity.UserExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sys_user
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <choose >
+      <when test="limitStart != -1 and limitEnd != -1" >
+        limit ${limitStart} , ${limitEnd}
+      </when>
+      <when test="limitStart != -1" >
+        limit ${limitStart}
+      </when>
+    </choose>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shframework.modules.sys.entity.UserExample" >
+    delete from sys_user
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shframework.modules.sys.entity.User" >
+    insert into sys_user (id, user_no, username, 
+      password, salt, email, 
+      mobile, session_id, token, 
+      last_modify_user_id, create_date, modify_date, 
+      status, locked, logic_delete, 
+      user_role)
+    values (#{id,jdbcType=INTEGER}, #{userNo,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, 
+      #{password,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{mobile,jdbcType=VARCHAR}, #{sessionId,jdbcType=VARCHAR}, #{token,jdbcType=VARCHAR}, 
+      #{lastModifyUserId,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{modifyDate,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=INTEGER}, #{locked,jdbcType=INTEGER}, #{logicDelete,jdbcType=INTEGER}, 
+      #{userRole,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shframework.modules.sys.entity.User" useGeneratedKeys="true" keyProperty="id">
+    insert into sys_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userNo != null" >
+        user_no,
+      </if>
+      <if test="username != null" >
+        username,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="salt != null" >
+        salt,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="mobile != null" >
+        mobile,
+      </if>
+      <if test="sessionId != null" >
+        session_id,
+      </if>
+      <if test="token != null" >
+        token,
+      </if>
+      <if test="lastModifyUserId != null" >
+        last_modify_user_id,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="modifyDate != null" >
+        modify_date,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="locked != null" >
+        locked,
+      </if>
+      <if test="logicDelete != null" >
+        logic_delete,
+      </if>
+      <if test="userRole != null" >
+        user_role,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userNo != null" >
+        #{userNo,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null" >
+        #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="sessionId != null" >
+        #{sessionId,jdbcType=VARCHAR},
+      </if>
+      <if test="token != null" >
+        #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="lastModifyUserId != null" >
+        #{lastModifyUserId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyDate != null" >
+        #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="locked != null" >
+        #{locked,jdbcType=INTEGER},
+      </if>
+      <if test="logicDelete != null" >
+        #{logicDelete,jdbcType=INTEGER},
+      </if>
+      <if test="userRole != null" >
+        #{userRole,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shframework.modules.sys.entity.UserExample" resultType="java.lang.Integer" >
+    select count(*) from sys_user
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update sys_user
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.userNo != null" >
+        user_no = #{record.userNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.username != null" >
+        username = #{record.username,jdbcType=VARCHAR},
+      </if>
+      <if test="record.password != null" >
+        password = #{record.password,jdbcType=VARCHAR},
+      </if>
+      <if test="record.salt != null" >
+        salt = #{record.salt,jdbcType=VARCHAR},
+      </if>
+      <if test="record.email != null" >
+        email = #{record.email,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mobile != null" >
+        mobile = #{record.mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sessionId != null" >
+        session_id = #{record.sessionId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.token != null" >
+        token = #{record.token,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lastModifyUserId != null" >
+        last_modify_user_id = #{record.lastModifyUserId,jdbcType=INTEGER},
+      </if>
+      <if test="record.createDate != null" >
+        create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.modifyDate != null" >
+        modify_date = #{record.modifyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.locked != null" >
+        locked = #{record.locked,jdbcType=INTEGER},
+      </if>
+      <if test="record.logicDelete != null" >
+        logic_delete = #{record.logicDelete,jdbcType=INTEGER},
+      </if>
+      <if test="record.userRole != null" >
+        user_role = #{record.userRole,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update sys_user
+    set id = #{record.id,jdbcType=INTEGER},
+      user_no = #{record.userNo,jdbcType=VARCHAR},
+      username = #{record.username,jdbcType=VARCHAR},
+      password = #{record.password,jdbcType=VARCHAR},
+      salt = #{record.salt,jdbcType=VARCHAR},
+      email = #{record.email,jdbcType=VARCHAR},
+      mobile = #{record.mobile,jdbcType=VARCHAR},
+      session_id = #{record.sessionId,jdbcType=VARCHAR},
+      token = #{record.token,jdbcType=VARCHAR},
+      last_modify_user_id = #{record.lastModifyUserId,jdbcType=INTEGER},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      modify_date = #{record.modifyDate,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=INTEGER},
+      locked = #{record.locked,jdbcType=INTEGER},
+      logic_delete = #{record.logicDelete,jdbcType=INTEGER},
+      user_role = #{record.userRole,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shframework.modules.sys.entity.User" >
+    update sys_user
+    <set >
+      <if test="userNo != null" >
+        user_no = #{userNo,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null" >
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null" >
+        salt = #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="sessionId != null" >
+        session_id = #{sessionId,jdbcType=VARCHAR},
+      </if>
+      <if test="token != null" >
+        token = #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="lastModifyUserId != null" >
+        last_modify_user_id = #{lastModifyUserId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyDate != null" >
+        modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="locked != null" >
+        locked = #{locked,jdbcType=INTEGER},
+      </if>
+      <if test="logicDelete != null" >
+        logic_delete = #{logicDelete,jdbcType=INTEGER},
+      </if>
+      <if test="userRole != null" >
+        user_role = #{userRole,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shframework.modules.sys.entity.User" >
+    update sys_user
+    set user_no = #{userNo,jdbcType=VARCHAR},
+      username = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      salt = #{salt,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      mobile = #{mobile,jdbcType=VARCHAR},
+      session_id = #{sessionId,jdbcType=VARCHAR},
+      token = #{token,jdbcType=VARCHAR},
+      last_modify_user_id = #{lastModifyUserId,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      locked = #{locked,jdbcType=INTEGER},
+      logic_delete = #{logicDelete,jdbcType=INTEGER},
+      user_role = #{userRole,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+    <!-- 
+  /**
+	 * 生产库，修正数据用
+	 * @return
+	 * @author RanWeizheng
+	 * @date 2017年3月16日 下午1:40:35
+	 */
+   -->	  	
+   <select id="getNoConfirmStus" resultMap="BaseResultMap">
+	SELECT 
+	_su.* 
+	FROM edu_roll_student_roll _ersr
+INNER JOIN edu_roll_student _ers ON _ersr.`student_id` = _ers.`user_id`
+INNER JOIN sys_user _su ON _su.id = _ersr.`student_id`
+LEFT JOIN edu_roll_student_confirm _ersc ON _ersc.student_id = _ersr.`student_id`
+WHERE _su.`logic_delete` = 0
+ AND _ersc.`student_id` IS NULL
+  </select>
+</mapper>

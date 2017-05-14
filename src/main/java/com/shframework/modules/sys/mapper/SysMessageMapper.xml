@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shframework.modules.sys.mapper.SysMessageMapper" >
+  <resultMap id="BaseResultMap" type="com.shframework.modules.sys.entity.SysMessage" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="send_user_id" property="sendUserId" jdbcType="INTEGER" />
+    <result column="receive_user_id" property="receiveUserId" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="read_date" property="readDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, send_user_id, receive_user_id, type, content, status, create_date, read_date
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shframework.modules.sys.entity.SysMessageExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sys_message
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <choose >
+      <when test="limitStart != -1 and limitEnd != -1" >
+        limit ${limitStart} , ${limitEnd}
+      </when>
+      <when test="limitStart != -1" >
+        limit ${limitStart}
+      </when>
+    </choose>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_message
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_message
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shframework.modules.sys.entity.SysMessageExample" >
+    delete from sys_message
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shframework.modules.sys.entity.SysMessage" >
+    insert into sys_message (id, send_user_id, receive_user_id, 
+      type, content, status, 
+      create_date, read_date)
+    values (#{id,jdbcType=INTEGER}, #{sendUserId,jdbcType=INTEGER}, #{receiveUserId,jdbcType=INTEGER}, 
+      #{type,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{readDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shframework.modules.sys.entity.SysMessage" >
+    insert into sys_message
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="sendUserId != null" >
+        send_user_id,
+      </if>
+      <if test="receiveUserId != null" >
+        receive_user_id,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="readDate != null" >
+        read_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="sendUserId != null" >
+        #{sendUserId,jdbcType=INTEGER},
+      </if>
+      <if test="receiveUserId != null" >
+        #{receiveUserId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="readDate != null" >
+        #{readDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shframework.modules.sys.entity.SysMessageExample" resultType="java.lang.Integer" >
+    select count(*) from sys_message
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update sys_message
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.sendUserId != null" >
+        send_user_id = #{record.sendUserId,jdbcType=INTEGER},
+      </if>
+      <if test="record.receiveUserId != null" >
+        receive_user_id = #{record.receiveUserId,jdbcType=INTEGER},
+      </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=INTEGER},
+      </if>
+      <if test="record.content != null" >
+        content = #{record.content,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.createDate != null" >
+        create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.readDate != null" >
+        read_date = #{record.readDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update sys_message
+    set id = #{record.id,jdbcType=INTEGER},
+      send_user_id = #{record.sendUserId,jdbcType=INTEGER},
+      receive_user_id = #{record.receiveUserId,jdbcType=INTEGER},
+      type = #{record.type,jdbcType=INTEGER},
+      content = #{record.content,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=INTEGER},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      read_date = #{record.readDate,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shframework.modules.sys.entity.SysMessage" >
+    update sys_message
+    <set >
+      <if test="sendUserId != null" >
+        send_user_id = #{sendUserId,jdbcType=INTEGER},
+      </if>
+      <if test="receiveUserId != null" >
+        receive_user_id = #{receiveUserId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="readDate != null" >
+        read_date = #{readDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shframework.modules.sys.entity.SysMessage" >
+    update sys_message
+    set send_user_id = #{sendUserId,jdbcType=INTEGER},
+      receive_user_id = #{receiveUserId,jdbcType=INTEGER},
+      type = #{type,jdbcType=INTEGER},
+      content = #{content,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      read_date = #{readDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="markRead" parameterType="com.shframework.modules.sys.entity.SysMessage" >
+    update sys_message
+    set 
+      status = 1,
+      read_date = #{readDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="markReadAll" parameterType="com.shframework.modules.sys.entity.SysMessage" >
+    update sys_message
+    set 
+      status = 1,
+      read_date = #{readDate,jdbcType=TIMESTAMP}
+    where 
+      receive_user_id = #{receiveUserId,jdbcType=INTEGER}
+      and read_date is null
+      and status = 0
+  </update>
+  
+</mapper>

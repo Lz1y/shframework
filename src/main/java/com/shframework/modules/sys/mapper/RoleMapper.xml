@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shframework.modules.sys.mapper.RoleMapper">
+  <resultMap id="BaseResultMap" type="role" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="priority" property="priority" jdbcType="INTEGER" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="last_modify_user_id" property="lastModifyUserId" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="locked" property="locked" jdbcType="INTEGER" />
+    <result column="logic_delete" property="logicDelete" jdbcType="INTEGER" />
+    <result column="resource_title" property="resourceTitle" jdbcType="VARCHAR" />
+    <result column="resource_id" property="resourceId" jdbcType="INTEGER" />
+  </resultMap>
+   
+   <select id="queryIdByCode" parameterType="java.lang.String" resultType="int">
+   	select id from sys_role where code = #{code}
+   </select>
+   
+   <!-- 
+  /**
+	 * 获取可以 分发的角色 （用于绑定角色可分发的角色时使用）
+	 * @param moduleId 指定模块的id 可选，null表示无条件
+	 * @return
+	 * @author RanWeizheng
+	 */
+   -->
+   <select id="getCfgableRole" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+   SELECT 
+   		DISTINCT(_sr.id),  _sr.title, _sr.code, _sr.priority, _sr.description, _sr.last_modify_user_id, _sr.create_date, _sr.modify_date, _sr.status, _sr.locked, _sr.logic_delete  
+   	from sys_role as _sr
+		Left Join sys_role_resource as _srr ON _srr.role_id = _sr.id
+		INNER JOIN sys_resource as _res ON _res.id=_srr.resource_id
+	WHERE
+		_sr.logic_delete = 0
+		<if test="moduleId!=null">
+		and _srr.resource_id = #{moduleId}
+		</if>
+		ORDER BY _res.priority desc, _sr.priority desc
+   </select>
+   
+   <select id="getCfgableRoleId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+   SELECT 
+   		DISTINCT(_sr.id)  
+   from sys_role as _sr
+		Left Join sys_role_resource as _srr ON _srr.role_id = _sr.id
+		INNER JOIN sys_resource as _res ON _res.id=_srr.resource_id
+	WHERE
+		_sr.logic_delete = 0
+		<if test="moduleId!=null">
+		and _srr.resource_id = #{moduleId}
+		</if>
+   </select>
+   
+  <!-- 
+  /**
+	 * 根据用户拥有的角色，找到其可以授权的角色的list
+	 * @param userRoleList
+	 * @return
+	 * @author RanWeizheng
+	 */
+   -->
+   <select id="getDispatchableRole" parameterType="list" resultMap="BaseResultMap">
+   SELECT 
+   		DISTINCT(_sr.id),  _sr.title, _sr.code, _sr.priority, _sr.description, _sr.last_modify_user_id, _sr.create_date, _sr.modify_date, _sr.status, _sr.locked, _sr.logic_delete  
+   	from sys_role as _sr
+		INNER JOIN sys_role_cfgrole as _src ON _src.cfg_role_id=_sr.id
+		Left Join sys_role_resource as _srr ON _srr.role_id = _sr.id
+		INNER JOIN sys_resource as _res ON _res.id=_srr.resource_id
+	WHERE
+		_sr.logic_delete = 0
+		<if test="moduleId!=null">
+		and _srr.resource_id = #{moduleId}
+		</if>
+		<if test="userRoleList!=null">
+		AND _src.role_id in 	
+			<foreach collection="userRoleList" item="item"  separator="," open="(" close=")">
+			#{item.id}
+			</foreach>
+		</if>
+		ORDER BY _res.priority desc, _sr.priority desc
+   </select>
+   
+   <!-- 
+   /**
+	 * 根据用户拥有的角色，找到其可以授权的角色的id 的 list
+	 * @param userRoleList 当该list为空时，表示所有的角色
+	 * @param moduleId 指定模块的id
+	 * @return
+	 * @author RanWeizheng
+	 */
+    -->
+    <select id="getDispatchableRoleId" parameterType="map" resultType="java.lang.Integer">
+   SELECT 
+   		DISTINCT(_sr.id)  
+   	from sys_role as _sr
+		INNER JOIN sys_role_cfgrole as _src ON _src.cfg_role_id=_sr.id
+		Left Join sys_role_resource as _srr ON _srr.role_id = _sr.id
+	WHERE
+		_sr.logic_delete = 0
+		<if test="moduleId!=null">
+		and _srr.resource_id = #{moduleId}
+		</if>
+		<if test="userRoleList!=null">
+		AND _src.role_id in 	
+			<foreach collection="userRoleList" item="item"  separator="," open="(" close=")">
+			#{item.id}
+			</foreach>
+		</if>
+   </select>
+   
+   
+   <!-- 
+   /**
+	 * 删除指定用户的指定范围内的角色
+	 * @param userId
+	 * @param dispatchableRoleList
+	 * @return
+	 	@author Ranweizheng
+	 */
+    -->
+  <delete id="delRoleDispathable" parameterType="map">
+  		delete from sys_user_role 
+  			where 
+  				user_id = #{userId} 
+  				<if test="roleIdList!=null">
+  				and role_id in <foreach collection="roleIdList" item="listItem" open="(" close=")" separator="," >#{listItem}</foreach>
+  				</if>
+  </delete>
+  
+  <!-- 
+  /**
+	 * 通过roleId 删除指定角色的指定角色范围内的 可配置角色
+	 * @param roleId
+	 * @return
+	 */
+   -->
+   <delete id="deleteCfgRoleByRoleId" parameterType="map">
+  		delete from sys_role_cfgrole 
+  			where 
+  				role_id = #{roleId} 
+  				<if test="cfgRoleIdList!=null">
+  				and cfg_role_id in <foreach collection="cfgRoleIdList" item="listItem" open="(" close=")" separator="," >#{listItem}</foreach>
+  				</if>
+  </delete>
+  
+  <select id="queryThisResourcesHasAnyRolesBySrrp" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+	select _role.* from sys_role _role 
+	inner join sys_role_resource_permission _srrp on _srrp.role_id = _role.id
+	inner join sys_resource _sr on _sr.id = _srrp.resource_id
+	inner join sys_permission _sp on _srrp.permission_id = _sp.id
+	where 1 = 1
+	and (_sp.code = '*' or _sp.code = 'list')
+	and (_srrp.resource_id = #{resourceId} or _sr.rule= '*')
+  </select>
+  
+  <select id="queryRoleCodeListByUserId" parameterType="java.lang.String" resultType="java.lang.String">
+  	select _sr.code from sys_role _sr 
+  	inner join sys_user_role _sur on _sr.id = _sur.role_id
+  	inner join sys_user _su on _sur.user_id = _su.id
+  	where _su.id = #{id}
+  </select>
+  
+  <!-- 
+  	角色管理页面列表 
+   -->
+  <select id="queryRoleList" resultMap="BaseResultMap" parameterType="map">
+  	select 
+    	_sr.*, _res.title as resource_title, _res.id as resource_id
+    from sys_role _sr
+    left join sys_role_resource as _srr on _sr.id=_srr.role_id
+    left JOIN sys_resource as _res ON _res.id=_srr.resource_id
+    <where>
+		${searchCondition}
+		and _sr.logic_delete = 0
+		<if test="moduleId!=null">
+		and _srr.resource_id = #{moduleId}
+		</if>
+	</where>
+    
+      ORDER BY _res.priority desc, _res.id asc, _sr.priority desc
+    
+	limit #{limitStart}, #{limitEnd}
+  </select>
+
+  <select id="queryRoleListCount" resultType="java.lang.Integer"  parameterType="map">
+  	select 
+	count(sr.id)
+    from sys_role sr
+     left join sys_role_resource as _srr on sr.id=_srr.role_id
+	<where>
+		${searchCondition}
+		and sr.logic_delete = 0
+		<if test="moduleId!=null">
+		and _srr.resource_id = #{moduleId}
+		</if>
+	</where>
+    <if test="searchCondition == null and defaultSortField != null" >
+      order by ${defaultSortField}
+    </if>
+  </select>
+  
+  
+  <!-- 
+  /**
+	 * 根据角色id 找到拥有该角色的所有教师的信息  ，查询时，为了保证数据准确性，要关联教师表
+	 * @param roleId 角色id
+	 * @return
+	 * @author RanWeizheng
+	 */
+	public List<Integer> (Integer  );
+   -->
+   <select id="getUserIdsByRoleId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+   SELECT 
+   		_su.id  
+   	from sys_user _su
+		INNER JOIN edu_tch_employee _ete ON _ete.user_id = _su.id
+   		INNER JOIN sys_user_role _sur ON _su.id = _sur.user_id
+	WHERE
+		_su.logic_delete = '0'
+		AND _su.status = '1'
+		AND _su.user_role = '0'
+		AND _sur.role_id =  #{roleId}
+	ORDER BY _ete.pinyin
+   </select>
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, title, code, priority, description, last_modify_user_id, create_date, modify_date, status, locked, logic_delete
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shframework.modules.sys.entity.RoleExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sys_role
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <choose >
+      <when test="limitStart != -1 and limitEnd != -1" >
+        limit ${limitStart} , ${limitEnd}
+      </when>
+      <when test="limitStart != -1" >
+        limit ${limitStart}
+      </when>
+    </choose>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_role
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_role
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shframework.modules.sys.entity.RoleExample" >
+    delete from sys_role
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shframework.modules.sys.entity.Role" useGeneratedKeys="true" keyProperty="id" >
+    insert into sys_role (id, title, code, 
+      priority, description, last_modify_user_id, 
+      create_date, modify_date, status, 
+      locked, logic_delete)
+    values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, 
+      #{priority,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}, #{lastModifyUserId,jdbcType=INTEGER}, 
+      now(), now(), #{status,jdbcType=INTEGER}, 
+      #{locked,jdbcType=INTEGER}, #{logicDelete,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shframework.modules.sys.entity.Role" useGeneratedKeys="true" keyProperty="id">
+    insert into sys_role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="priority != null" >
+        priority,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="lastModifyUserId != null" >
+        last_modify_user_id,
+      </if>
+      
+        create_date,
+        modify_date,
+      
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="locked != null" >
+        locked,
+      </if>
+      <if test="logicDelete != null" >
+        logic_delete,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="priority != null" >
+        #{priority,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="lastModifyUserId != null" >
+        #{lastModifyUserId,jdbcType=INTEGER},
+      </if>
+      
+      now(),
+      now(),
+      
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="locked != null" >
+        #{locked,jdbcType=INTEGER},
+      </if>
+      <if test="logicDelete != null" >
+        #{logicDelete,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shframework.modules.sys.entity.RoleExample" resultType="java.lang.Integer" >
+    select count(*) from sys_role
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update sys_role
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.title != null" >
+        title = #{record.title,jdbcType=VARCHAR},
+      </if>
+      <if test="record.code != null" >
+        code = #{record.code,jdbcType=VARCHAR},
+      </if>
+      <if test="record.priority != null" >
+        priority = #{record.priority,jdbcType=INTEGER},
+      </if>
+      <if test="record.description != null" >
+        description = #{record.description,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lastModifyUserId != null" >
+        last_modify_user_id = #{record.lastModifyUserId,jdbcType=INTEGER},
+      </if>
+      <if test="record.createDate != null" >
+        create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      </if>
+        modify_date = now(),
+      
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.locked != null" >
+        locked = #{record.locked,jdbcType=INTEGER},
+      </if>
+      <if test="record.logicDelete != null" >
+        logic_delete = #{record.logicDelete,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update sys_role
+    set id = #{record.id,jdbcType=INTEGER},
+      title = #{record.title,jdbcType=VARCHAR},
+      code = #{record.code,jdbcType=VARCHAR},
+      priority = #{record.priority,jdbcType=INTEGER},
+      description = #{record.description,jdbcType=VARCHAR},
+      last_modify_user_id = #{record.lastModifyUserId,jdbcType=INTEGER},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      modify_date = now(),
+      status = #{record.status,jdbcType=INTEGER},
+      locked = #{record.locked,jdbcType=INTEGER},
+      logic_delete = #{record.logicDelete,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shframework.modules.sys.entity.Role" >
+    update sys_role
+    <set >
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="priority != null" >
+        priority = #{priority,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="lastModifyUserId != null" >
+        last_modify_user_id = #{lastModifyUserId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      
+        modify_date = now(),
+      
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="locked != null" >
+        locked = #{locked,jdbcType=INTEGER},
+      </if>
+      <if test="logicDelete != null" >
+        logic_delete = #{logicDelete,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shframework.modules.sys.entity.Role" >
+    update sys_role
+    set title = #{title,jdbcType=VARCHAR},
+      code = #{code,jdbcType=VARCHAR},
+      priority = #{priority,jdbcType=INTEGER},
+      description = #{description,jdbcType=VARCHAR},
+      last_modify_user_id = #{lastModifyUserId,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      modify_date = now(),
+      status = #{status,jdbcType=INTEGER},
+      locked = #{locked,jdbcType=INTEGER},
+      logic_delete = #{logicDelete,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

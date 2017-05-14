@@ -1,0 +1,139 @@
+ul.source, ul.target, ul.result {
+  min-height: 50px;
+  margin: 0px 25px 10px 0px;
+  padding: 2px;
+  border-width: 1px;
+  border-style: solid;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  list-style-type: none;
+  list-style-position: inside;
+}
+
+ul.source {
+  border-color: #f8e0b1;
+  width: 20%;
+}
+ul.target {
+  border-color: #add38d;
+  width: 20%;
+}
+ul.result {
+  border-color: #ECA9EF;
+  width: 20%;
+}
+
+.source li, .target li, .result li {
+  margin: 5px;
+  padding: 5px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.source li {
+  background-color: #fcf8e3;
+  border: 1px solid #fbeed5;
+  color: #c09853;
+}
+.target li {
+  background-color: #ebf5e6;
+  border: 1px solid #d6e9c6;
+  color: #468847;
+}
+.result li {
+  background-color: #fcf8e3;
+  border: 1px solid #fbeed5;
+  color: #c09853;
+}
+
+
+.sortable-dragging {
+  border-color: #ccc !important;
+  background-color: #fafafa !important;
+  color: #bbb !important;
+}
+.sortable-placeholder {
+  height: 40px;
+}
+
+.source .sortable-placeholder {
+  border: 2px dashed #f8e0b1 !important;
+  background-color: #fefcf5 !important;
+}
+.target .sortable-placeholder {
+  border: 2px dashed #add38d !important;
+  background-color: #f6fbf4 !important;
+}
+.result .sortable-placeholder {
+  border: 2px dashed #f8e0b1 !important;
+  background-color: #fefcf5 !important;
+}
+.selhid-true {
+	display:none;
+}
+
+.btn_cancel {
+ margin-left:10px;
+}
+
+.search_condition{
+	margin-left:10px;
+}
+
+.btn_search {
+  float: right;
+}
+
+.bn_li {
+	vertical-align: middle;
+}
+
+.td_btn_width_2 {
+	width:135px !important; 
+}
+.td_btn_width_3 {
+	width:200px !important;
+}
+.td_btn_width_4 {
+	width:265px !important;
+}
+
+.td_checks {
+	width:30px;
+}
+
+.th_min_width th{
+width: 1px;
+    white-space: nowrap; 
+    word-break:  keep-all; 
+
+}
+
+.input_priority_width{
+	width:80px  !important;
+}
+
+
+/*
+table 中 th td 的文字居中
+*/
+.table_align_center th, .table_align_center td{
+	text-align:center;
+	vertical-align: middle !important;
+}
+
+div.tree {height:610px;overflow-y:scroll;overflow-x:auto;}
+
+/*文字超长时，截断部分显示为“...”*/
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-break: keep-all;
+	
+}
+
+.break{word-break:break-all;word-wrap:break-word;}

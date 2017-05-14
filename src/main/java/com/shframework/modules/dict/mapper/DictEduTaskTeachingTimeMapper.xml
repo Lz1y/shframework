@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shframework.modules.dict.mapper.DictEduTaskTeachingTimeMapper" >
+  <resultMap id="BaseResultMap" type="com.shframework.modules.dict.entity.DictEduTaskTeachingTime" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="week_day" property="weekDay" jdbcType="INTEGER" />
+    <result column="period_id" property="periodId" jdbcType="INTEGER" />
+    <result column="use_flag" property="useFlag" jdbcType="INTEGER" />
+    <association property ="period" column="period_id"   javaType= "com.shframework.modules.dict.entity.DictEduTaskPeriod">
+       <id column ="id" property="id" jdbcType= "INTEGER" />
+       <result column ="title" property="title" jdbcType= "VARCHAR" />
+    </association>
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, week_day, period_id, use_flag
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shframework.modules.dict.entity.DictEduTaskTeachingTimeExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from dict_edu_task_teaching_time
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <choose >
+      <when test="limitStart != -1 and limitEnd != -1" >
+        limit ${limitStart} , ${limitEnd}
+      </when>
+      <when test="limitStart != -1" >
+        limit ${limitStart}
+      </when>
+    </choose>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dict_edu_task_teaching_time
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dict_edu_task_teaching_time
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shframework.modules.dict.entity.DictEduTaskTeachingTimeExample" >
+    delete from dict_edu_task_teaching_time
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shframework.modules.dict.entity.DictEduTaskTeachingTime" >
+    insert into dict_edu_task_teaching_time (id, week_day, period_id, 
+      use_flag)
+    values (#{id,jdbcType=INTEGER}, #{weekDay,jdbcType=INTEGER}, #{periodId,jdbcType=INTEGER}, 
+      #{useFlag,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shframework.modules.dict.entity.DictEduTaskTeachingTime" >
+    insert into dict_edu_task_teaching_time
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="weekDay != null" >
+        week_day,
+      </if>
+      <if test="periodId != null" >
+        period_id,
+      </if>
+      <if test="useFlag != null" >
+        use_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="weekDay != null" >
+        #{weekDay,jdbcType=INTEGER},
+      </if>
+      <if test="periodId != null" >
+        #{periodId,jdbcType=INTEGER},
+      </if>
+      <if test="useFlag != null" >
+        #{useFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shframework.modules.dict.entity.DictEduTaskTeachingTimeExample" resultType="java.lang.Integer" >
+    select count(*) from dict_edu_task_teaching_time
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update dict_edu_task_teaching_time
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.weekDay != null" >
+        week_day = #{record.weekDay,jdbcType=INTEGER},
+      </if>
+      <if test="record.periodId != null" >
+        period_id = #{record.periodId,jdbcType=INTEGER},
+      </if>
+      <if test="record.useFlag != null" >
+        use_flag = #{record.useFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update dict_edu_task_teaching_time
+    set id = #{record.id,jdbcType=INTEGER},
+      week_day = #{record.weekDay,jdbcType=INTEGER},
+      period_id = #{record.periodId,jdbcType=INTEGER},
+      use_flag = #{record.useFlag,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shframework.modules.dict.entity.DictEduTaskTeachingTime" >
+    update dict_edu_task_teaching_time
+    <set >
+      <if test="weekDay != null" >
+        week_day = #{weekDay,jdbcType=INTEGER},
+      </if>
+      <if test="periodId != null" >
+        period_id = #{periodId,jdbcType=INTEGER},
+      </if>
+      <if test="useFlag != null" >
+        use_flag = #{useFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shframework.modules.dict.entity.DictEduTaskTeachingTime" >
+    update dict_edu_task_teaching_time
+    set week_day = #{weekDay,jdbcType=INTEGER},
+      period_id = #{periodId,jdbcType=INTEGER},
+      use_flag = #{useFlag,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+   <delete id="deleteAll">
+    delete from dict_edu_task_teaching_time
+    where 1=1
+  </delete>
+  
+    <select id="queryTeachingTimeAll" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from dict_edu_task_teaching_time _teachingtime
+    where _teachingtime.use_flag = 1
+  </select>
+  
+  
+ <select id="queryTeachingTime" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select 
+    _teachingtime.*,
+    _period.title
+    from dict_edu_task_teaching_time _teachingtime
+    inner join dict_edu_task_period _period on _teachingtime.period_id = _period.id
+    where _teachingtime.use_flag = #{useFlag,jdbcType=INTEGER}
+  </select>
+  
+   <select id="selectByWeekDayAndPeriodId" resultMap="BaseResultMap" parameterType="map">
+    select 
+    _teachingtime.*
+    from dict_edu_task_teaching_time _teachingtime
+    where _teachingtime.use_flag = 1
+    <if test="weekDay != null">
+      AND _teachingtime.week_day = #{weekDay,jdbcType=INTEGER}
+    </if>
+    <if test= "periodIdList !=null" >  
+      AND _teachingtime.period_id IN 
+      <foreach index ="index" item="periodId" collection= "periodIdList" open="(" close =")" separator=",">
+        #{periodId}
+      </foreach >
+    </if> 
+  </select>
+  
+</mapper>

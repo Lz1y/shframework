@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shframework.modules.sys.mapper.ComnTemplateDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.shframework.modules.sys.entity.ComnTemplateDetail" >
+    <id column="template_id" property="templateId" jdbcType="INTEGER" />
+    <id column="col_db_name" property="colDbName" jdbcType="VARCHAR" />
+    <id column="table_db_alias" property="tableDbAlias" jdbcType="VARCHAR" />
+    <result column="col_file_name" property="colFileName" jdbcType="VARCHAR" />
+    <result column="priority" property="priority" jdbcType="INTEGER" />
+  </resultMap>
+  
+   <resultMap id="COMMENT" type="com.shframework.modules.sys.entity.ColumnComment" >
+    <result column="COLUMN_NAME" property="columnName" jdbcType="VARCHAR" />
+    <result column="COLUMN_COMMENT" property="columnComment" jdbcType="VARCHAR" />
+    <result column="TABLE_COMMENT" property="tableComment" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    template_id, col_db_name, table_db_alias, col_file_name,priority
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shframework.modules.sys.entity.ComnTemplateDetailExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from comn_template_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <choose >
+      <when test="limitStart != -1 and limitEnd != -1" >
+        limit ${limitStart} , ${limitEnd}
+      </when>
+      <when test="limitStart != -1" >
+        limit ${limitStart}
+      </when>
+    </choose>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.shframework.modules.sys.entity.ComnTemplateDetailKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from comn_template_detail
+    where template_id = #{templateId,jdbcType=INTEGER}
+      and col_db_name = #{colDbName,jdbcType=VARCHAR}
+      and table_db_alias = #{tableDbAlias,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.shframework.modules.sys.entity.ComnTemplateDetailKey" >
+    delete from comn_template_detail
+    where template_id = #{templateId,jdbcType=INTEGER}
+      and col_db_name = #{colDbName,jdbcType=VARCHAR}
+      and table_db_alias = #{tableDbAlias,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shframework.modules.sys.entity.ComnTemplateDetailExample" >
+    delete from comn_template_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shframework.modules.sys.entity.ComnTemplateDetail" >
+    insert into comn_template_detail (template_id, col_db_name, table_db_alias, 
+      col_file_name,priority)
+    values (#{templateId,jdbcType=INTEGER}, #{colDbName,jdbcType=VARCHAR}, #{tableDbAlias,jdbcType=VARCHAR}, 
+      #{colFileName,jdbcType=VARCHAR},#{priority,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shframework.modules.sys.entity.ComnTemplateDetail" >
+    insert into comn_template_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="templateId != null" >
+        template_id,
+      </if>
+      <if test="colDbName != null" >
+        col_db_name,
+      </if>
+      <if test="tableDbAlias != null" >
+        table_db_alias,
+      </if>
+      <if test="colFileName != null" >
+        col_file_name,
+      </if>
+      <if test="priority != null" >
+        priority,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="templateId != null" >
+        #{templateId,jdbcType=INTEGER},
+      </if>
+      <if test="colDbName != null" >
+        #{colDbName,jdbcType=VARCHAR},
+      </if>
+      <if test="tableDbAlias != null" >
+        #{tableDbAlias,jdbcType=VARCHAR},
+      </if>
+      <if test="colFileName != null" >
+        #{colFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="priority != null" >
+        #{priority,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shframework.modules.sys.entity.ComnTemplateDetailExample" resultType="java.lang.Integer" >
+    select count(*) from comn_template_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update comn_template_detail
+    <set >
+      <if test="record.templateId != null" >
+        template_id = #{record.templateId,jdbcType=INTEGER},
+      </if>
+      <if test="record.colDbName != null" >
+        col_db_name = #{record.colDbName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tableDbAlias != null" >
+        table_db_alias = #{record.tableDbAlias,jdbcType=VARCHAR},
+      </if>
+      <if test="record.colFileName != null" >
+        col_file_name = #{record.colFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.priority != null" >
+        col_file_name = #{record.priority,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update comn_template_detail
+    set template_id = #{record.templateId,jdbcType=INTEGER},
+      col_db_name = #{record.colDbName,jdbcType=VARCHAR},
+      table_db_alias = #{record.tableDbAlias,jdbcType=VARCHAR},
+      col_file_name = #{record.colFileName,jdbcType=VARCHAR},
+      priority = #{record.priority,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shframework.modules.sys.entity.ComnTemplateDetail" >
+    update comn_template_detail
+    <set >
+      <if test="colFileName != null" >
+        col_file_name = #{colFileName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where template_id = #{templateId,jdbcType=INTEGER}
+      and col_db_name = #{colDbName,jdbcType=VARCHAR}
+      and table_db_alias = #{tableDbAlias,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shframework.modules.sys.entity.ComnTemplateDetail" >
+    update comn_template_detail
+    set priority = #{priority,jdbcType=INTEGER},
+      col_file_name = #{colFileName,jdbcType=VARCHAR}
+    where template_id = #{templateId,jdbcType=INTEGER}
+      and col_db_name = #{colDbName,jdbcType=VARCHAR}
+      and table_db_alias = #{tableDbAlias,jdbcType=VARCHAR}
+  </update>
+  
+  
+<select id="getComnTemplateDetailListByTemplateId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  SELECT 
+  <include refid="Base_Column_List" />
+  FROM comn_template_detail
+  WHERE template_id = #{0} order by priority asc;
+</select>  
+
+<!-- 根据template_id 值 查询对应的{"col_file_name":"col_db_name",...} 值  (add by zhangjk)  
+<select id="getMap" resultType="java.util.LinkedHashMap" parameterType="com.shframework.common.util.MapParam" >
+  SELECT col_file_name,col_db_name
+  FROM comn_template_detail
+  WHERE template_id = #{templateId,jdbcType=INTEGER}
+</select>
+
+<select id="getColdbColFileName" resultType="java.util.LinkedHashMap" parameterType="com.shframework.common.util.MapParam" >
+  SELECT col_db_name,col_file_name
+  FROM comn_template_detail
+  WHERE template_id = #{templateId,jdbcType=INTEGER}
+</select>
+-->
+
+
+  <!-- 
+    /**
+     *获取 给定“数据库”下，给定“表名”的信息：列名（表别名,列名），列注释
+     * @return map
+     * @author zhangjk
+     */
+      -->
+  <select id="getColumnCommentByList" resultType="java.util.LinkedHashMap" parameterType="list">
+    <foreach index="index" item="item" collection="list"  separator="UNION ALL">
+      (
+      SELECT DISTINCT(concat(#{item.alias},',',COLUMN_NAME)) as COLUMN_NAME , COLUMN_COMMENT FROM information_schema.COLUMNS 
+      WHERE  
+      TABLE_SCHEMA = #{item.dbName}
+      AND TABLE_NAME=#{item.tableName}
+      ) 
+    </foreach>
+  </select>
+  
+  <!-- 获取 给定“数据库”下，给定“表名”的信息：列名（表别名,列名），列注释，表注释 -->
+  <select id="getComment" parameterType="java.util.LinkedHashMap" resultMap="COMMENT">
+    <foreach index="index" item="item" collection="list"  separator="UNION ALL">
+      (SELECT DISTINCT(concat(#{item.alias},',',COLUMN_NAME)) as COLUMN_NAME , COLUMN_COMMENT,TABLE_COMMENT  FROM information_schema.COLUMNS 
+      INNER JOIN information_schema.TABLES ON information_schema.TABLES.`TABLE_NAME` = information_schema.COLUMNS.`TABLE_NAME`
+        AND information_schema. TABLES.TABLE_SCHEMA = information_schema. COLUMNS.TABLE_SCHEMA
+      WHERE  information_schema. TABLES.TABLE_SCHEMA = #{item.dbName}
+       AND information_schema.COLUMNS.TABLE_NAME=#{item.tableName}
+      ) 
+    </foreach>
+  </select>
+    
+  <delete id="deleteByTemplateId" parameterType="java.lang.Integer" >
+    delete from comn_template_detail
+    where template_id = #{templateId,jdbcType=INTEGER}
+  </delete>
+  
+<!-- 有模板设置时，导出公用方法，勾选或带搜索条件 -->
+<select id="saveExportExcelByIdList" parameterType="map" resultType="map" statementType="STATEMENT">
+    SELECT 
+      <if test="columnSql != null">
+      distinct
+          ${columnSql}  
+      </if>
+      <if test="columnSql == null">
+        count(*)
+      </if>
+    FROM 
+      <if test="fromSql != null">
+          ${fromSql}  
+      </if>
+      <if test="fromSql == null">
+        DUAL
+      </if>
+      where 1=1
+      <if test = "defaultWhereSql != null">
+        ${defaultWhereSql}
+      </if>
+        ${searchCondition}
+      <if test= "idList !=null and whereSql !=null and whereSql.length == 1" >  
+          <foreach index ="index" item="item" collection= "whereSql">
+            and ${item} in 
+            <foreach index ="index" item="itemId" collection= "idList" open="(" close =")" separator=",">
+              ${itemId}
+            </foreach >
+        </foreach >
+      </if> 
+  </select>
+  
+  <!-- 缴费管理专用，导出公用方法，勾选或带搜索条件 -->
+  <select id="exportExcelPaymentData" parameterType="map" resultType="java.util.concurrent.ConcurrentHashMap">
+  SELECT 
+    <if test="columnSql != null">
+    distinct
+        ${columnSql}  
+    </if>
+    <if test="columnSql == null">
+      count(*)
+    </if>
+  FROM 
+    <if test="fromSql != null">
+        ${fromSql}  
+    </if>
+    <if test="fromSql == null">
+      DUAL
+    </if>
+    where 1=1
+    <if test = "defaultWhereSql != null">
+      ${defaultWhereSql}
+    </if>
+    <if test = "idListReal ==null">
+      ${searchCondition}
+    </if>
+    <if test = "idListReal !=null">
+    and 
+      <foreach collection="idListReal" item="item" open="(" close=")" separator="or">
+           _erph.student_id = #{item.studentId}
+            and _erph.academic_year_id = #{item.academicYearId} 
+      </foreach>
+    </if>
+  
+</select>
+  
+</mapper>

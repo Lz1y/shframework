@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+	<mapping map-id="userMapping">
+		<class-a>com.shframework.modules.sys.validator.UserFormValidator</class-a>
+		<class-b>com.shframework.modules.sys.entity.User</class-b>
+		<field>
+			<a>username</a>
+			<b>username</b>
+		</field>
+		<field>
+			<a>email</a>
+			<b>email</b>
+		</field>
+		<field>
+			<a>mobile</a>
+			<b>mobile</b>
+		</field>
+	</mapping>
+	
+	<mapping>
+		<class-a>com.shframework.common.util.Node</class-a>
+		<class-b>com.shframework.modules.sys.entity.Resource</class-b>
+		<field>
+			<a>id</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>title</a>
+			<b>title</b>
+		</field>
+	</mapping>
+	
+	<mapping>
+		<class-a>com.shframework.common.util.DictCascadeVo</class-a>
+		<class-b>com.shframework.modules.dict.entity.DictCommon</class-b>
+		<field>
+			<a>id</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>title</a>
+			<b>title</b>
+		</field>
+	</mapping>
+	
+	<mapping>
+		<class-a>com.shframework.common.util.DictCascadeVo</class-a>
+		<class-b>com.shframework.modules.dict.entity.DictEduCommonGroupMajor</class-b>
+		<field>
+			<a>id</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>title</a>
+			<b>title</b>
+		</field>
+	</mapping>
+	
+	<mapping>
+		<class-a>com.shframework.common.util.DictCascadeVo</class-a>
+		<class-b>com.shframework.modules.dict.entity.DictEduCommonMajor</class-b>
+		<field>
+			<a>id</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>title</a>
+			<b>title</b>
+		</field>
+	</mapping>
+	
+	<mapping>
+		<class-a>com.shframework.common.util.DictCascadeVo</class-a>
+		<class-b>com.shframework.modules.dict.entity.DictEduCommonMajorField</class-b>
+		<field>
+			<a>id</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>title</a>
+			<b>title</b>
+		</field>
+	</mapping>
+	
+	<mapping>
+		<class-a>com.shframework.common.util.Node</class-a>
+		<class-b>com.shframework.modules.dict.entity.DictEduCommonDepartment</class-b>
+		<field>
+			<a>id</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>title</a>
+			<b>title</b>
+		</field>
+	</mapping>
+	
+	<!-- Permission 与 MergerPerVo Begin @author Rwz -->
+	<mapping>
+		<class-a>com.shframework.modules.sys.entity.Permission</class-a>
+		<class-b>com.shframework.modules.sys.entity.vo.MergerPerVo</class-b>
+		<field>
+			<a>id</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>code</a>
+			<b>code</b>
+		</field>
+		<field>
+			<a>title</a>
+			<b>title</b>
+		</field>
+	</mapping>
+	<!-- Permission 与 MergerPerVo End -->
+	
+</mappings>

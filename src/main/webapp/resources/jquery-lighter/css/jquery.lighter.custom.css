@@ -1,0 +1,22 @@
+.examples {
+  max-width: 68em;
+  margin-left: 1em;
+  margin-right: auto; 
+}
+.examples::after {
+  clear: both;
+  content: "";
+  display: table; 
+}
+.examples .example {
+  float: left;
+  display: block;
+  margin-right: 2.5%;
+  width: 22%; 
+}
+.examples .example:last-child {
+  margin-right: 0; 
+}
+.examples .example img {
+  width: 100%; 
+}

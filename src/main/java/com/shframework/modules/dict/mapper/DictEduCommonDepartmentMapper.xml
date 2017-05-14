@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shframework.modules.dict.mapper.DictEduCommonDepartmentMapper" >
+  <resultMap id="BaseResultMap" type="dictEduCommonDepartment" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+    <result column="has_child" property="hasChild" jdbcType="INTEGER" />
+    <result column="campus_id" property="campusId" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="priority" property="priority" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="locked" property="locked" jdbcType="INTEGER" />
+    <result column="logic_delete" property="logicDelete" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, code, title, parent_id, has_child, campus_id, type, priority, status, 
+    locked, logic_delete
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shframework.modules.dict.entity.DictEduCommonDepartmentExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from dict_edu_common_department
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <choose >
+      <when test="limitStart != -1 and limitEnd != -1" >
+        limit ${limitStart} , ${limitEnd}
+      </when>
+      <when test="limitStart != -1" >
+        limit ${limitStart}
+      </when>
+    </choose>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dict_edu_common_department
+    where id = #{id,jdbcType=INTEGER}
+    and logic_delete = 0
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dict_edu_common_department
+    where id = #{id,jdbcType=INTEGER}
+    and logic_delete = 0
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shframework.modules.dict.entity.DictEduCommonDepartmentExample" >
+    delete from dict_edu_common_department
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shframework.modules.dict.entity.DictEduCommonDepartment" >
+    insert into dict_edu_common_department (id, code, title, 
+      parent_id, has_child, campus_id, 
+      type, priority, 
+      status, locked, logic_delete
+      )
+    values (#{id,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, 
+      #{parentId,jdbcType=INTEGER}, #{hasChild,jdbcType=INTEGER}, #{campusId,jdbcType=INTEGER}, 
+      #{type,jdbcType=INTEGER}, #{priority,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER}, #{locked,jdbcType=INTEGER}, #{logicDelete,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.shframework.modules.dict.entity.DictEduCommonDepartment" >
+    insert into dict_edu_common_department
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="parentId != null" >
+        parent_id,
+      </if>
+      <if test="hasChild != null" >
+        has_child,
+      </if>
+      <if test="campusId != null" >
+        campus_id,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="priority != null" >
+        priority,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="locked != null" >
+        locked,
+      </if>
+      <if test="logicDelete != null" >
+        logic_delete,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="hasChild != null" >
+        #{hasChild,jdbcType=INTEGER},
+      </if>
+      <if test="campusId != null" >
+        #{campusId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="priority != null" >
+        #{priority,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="locked != null" >
+        #{locked,jdbcType=INTEGER},
+      </if>
+      <if test="logicDelete != null" >
+        #{logicDelete,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shframework.modules.dict.entity.DictEduCommonDepartmentExample" resultType="java.lang.Integer" >
+    select count(*) from dict_edu_common_department
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update dict_edu_common_department
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.code != null" >
+        code = #{record.code,jdbcType=VARCHAR},
+      </if>
+      <if test="record.title != null" >
+        title = #{record.title,jdbcType=VARCHAR},
+      </if>
+      <if test="record.parentId != null" >
+        parent_id = #{record.parentId,jdbcType=INTEGER},
+      </if>
+      <if test="record.hasChild != null" >
+        has_child = #{record.hasChild,jdbcType=INTEGER},
+      </if>
+      <if test="record.campusId != null" >
+        campus_id = #{record.campusId,jdbcType=INTEGER},
+      </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=INTEGER},
+      </if>
+      <if test="record.priority != null" >
+        priority = #{record.priority,jdbcType=INTEGER},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.locked != null" >
+        locked = #{record.locked,jdbcType=INTEGER},
+      </if>
+      <if test="record.logicDelete != null" >
+        logic_delete = #{record.logicDelete,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update dict_edu_common_department
+    set id = #{record.id,jdbcType=INTEGER},
+      code = #{record.code,jdbcType=VARCHAR},
+      title = #{record.title,jdbcType=VARCHAR},
+      parent_id = #{record.parentId,jdbcType=INTEGER},
+      has_child = #{record.hasChild,jdbcType=INTEGER},
+      campus_id = #{record.campusId,jdbcType=INTEGER},
+      type = #{record.type,jdbcType=INTEGER},
+      priority = #{record.priority,jdbcType=INTEGER},
+      status = #{record.status,jdbcType=INTEGER},
+      locked = #{record.locked,jdbcType=INTEGER},
+      logic_delete = #{record.logicDelete,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shframework.modules.dict.entity.DictEduCommonDepartment" >
+    update dict_edu_common_department
+    <set >
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        parent_id = #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="hasChild != null" >
+        has_child = #{hasChild,jdbcType=INTEGER},
+      </if>
+      <if test="campusId != null" >
+        campus_id = #{campusId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="priority != null" >
+        priority = #{priority,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="locked != null" >
+        locked = #{locked,jdbcType=INTEGER},
+      </if>
+      <if test="logicDelete != null" >
+        logic_delete = #{logicDelete,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+    and logic_delete = 0
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shframework.modules.dict.entity.DictEduCommonDepartment" >
+    update dict_edu_common_department
+    set code = #{code,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      parent_id = #{parentId,jdbcType=INTEGER},
+      has_child = #{hasChild,jdbcType=INTEGER},
+      campus_id = #{campusId,jdbcType=INTEGER},
+      type = #{type,jdbcType=INTEGER},
+      priority = #{priority,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      locked = #{locked,jdbcType=INTEGER},
+      logic_delete = #{logicDelete,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+    and logic_delete = 0
+  </update>
+  
+    <!-- 
+     * 根据父节点取得孩子节点的数量
+     * @param   Map: parentId 父节点
+     * @return 	Map: int  孩子节点的数量
+   -->
+  <select id="getChildrenCount" parameterType="Integer" resultType="int">
+	SELECT COUNT(*) 
+	FROM dict_edu_common_department
+	WHERE parent_id = #{parentId} 
+	and status = 1 
+	and logic_delete = 0
+  </select> 
+  
+  <select id="selectDepartment" resultType="java.util.HashMap">
+    select code,title,
+    
+      CASE campus_id
+        WHEN 1 then '院本部'
+        WHEN 2 then '东校区'
+        WHEN 3 then '南校区'
+        WHEN 4 then '密云'
+      END,
+    
+      CASE type
+        WHEN 0 then '学院'
+        WHEN 1 then '教学系部'
+        WHEN 2 then '行政部门'
+      END
+    from dict_edu_common_department 
+    where logic_delete = 0
+    AND status = 1
+  </select>
+  
+</mapper>

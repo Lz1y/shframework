@@ -1,0 +1,33 @@
+/*
+ * EasyZoom:¸ü¸Äclass Ãû³Æ
+ * modify by zhangjk
+ */
+.container_section {
+	width: 640px;
+}
+
+.container_section section + section {
+	margin-top: 3em;
+	border-top: 1px solid #ccc;
+	padding-top: 1em;
+}
+
+.thumbnails {
+	overflow: hidden;
+	margin: 1em 0;
+	padding: 0;
+	text-align: center;
+}
+
+.thumbnails li {
+	display: inline-block;
+	width: 140px;
+	margin: 0 5px;
+}
+
+.thumbnails img {
+	display: block;
+	min-width: 100%;
+	max-width: 100%;
+}
+

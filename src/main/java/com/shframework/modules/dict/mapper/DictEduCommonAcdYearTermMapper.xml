@@ -1,0 +1,634 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shframework.modules.dict.mapper.DictEduCommonAcdYearTermMapper" >
+  <resultMap id="BaseResultMap" type="dictEduCommonAcdYearTerm" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="academic_year_id" property="academicYearId" jdbcType="INTEGER" />
+    <result column="term_id" property="termId" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="term_weeks" property="termWeeks" jdbcType="INTEGER" />
+    <result column="deduct_weeks" property="deductWeeks" jdbcType="INTEGER" />
+    <result column="start_date" property="startDate" jdbcType="DATE" />
+    <result column="end_date" property="endDate" jdbcType="DATE" />
+    <result column="notes" property="notes" jdbcType="VARCHAR" />
+    <result column="priority" property="priority" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="locked" property="locked" jdbcType="INTEGER" />
+    <result column="standard" property="standard" jdbcType="INTEGER" />
+    <result column="logic_delete" property="logicDelete" jdbcType="INTEGER" />
+    
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="year_term_code" property="yearTermCode" jdbcType="VARCHAR" />
+    
+    <result column="yearTitle" property="yearTitle" jdbcType="VARCHAR" />
+    <result column="termTitle" property="termTitle" jdbcType="VARCHAR" />
+    <result column="yearCode" property="yearCode" jdbcType="VARCHAR" />
+    <result column="termCode" property="termCode" jdbcType="VARCHAR" />
+    
+  </resultMap>
+  
+  <!-- 
+   /**
+     * 根据查询条件map，查找符合条件的记录数量
+     * @param parMap 
+     * {
+     * String tableName;
+     * String searchCondition;
+     * int limitStart;
+     * int limitEnd;
+     * }
+     * @return
+     * @author RanWeizheng
+     */
+   -->
+   <select id="countByMap" parameterType="map" resultType="java.lang.Integer" >
+    select count(*) from dict_edu_common_acd_year_term as _decayt
+    <where>
+     _decayt.logic_delete = 0
+     ${searchCondition}
+     </where>
+  </select>
+  
+   <!-- 
+    /**
+     * 根据查询条件map，查找符合条件的记录
+     * @param parMap 
+     * {
+     * String tableName;
+     * String searchCondition;
+     * int limitStart;
+     * int limitEnd;
+     * }
+     * @return
+     * @author RanWeizheng
+     */
+   -->
+  <select id="selectByMap" resultMap="BaseResultMap" parameterType="map" >
+    select
+    
+    _decayt.id, 
+    _decayt.academic_year_id, 
+    _decayt.term_id, 
+    _decayt.code, 
+    _decayt.term_weeks, 
+    _decayt.deduct_weeks, 
+    _decayt.start_date, 
+    _decayt.end_date, 
+    _decayt.notes,
+    _decayt.priority,
+    _decayt.status,
+    _decayt.locked,
+    _decayt.standard,
+    _decayt.logic_delete
+    
+    from 
+    dict_edu_common_acd_year_term as _decayt
+    Where
+    _decayt.logic_delete = 0
+    ${searchCondition}
+    <if test="searchCondition == null or searchCondition == ''" >
+      order by ${defaultSortField}
+    </if>
+    limit #{limitStart}, #{limitEnd}
+  </select>
+  
+  <!-- 
+   /**
+     * 根据表名，获取状态为选用，未删除，且根据priority字段排序 的 记录数据
+     * @param tableName
+     * @return
+     */
+   -->
+   <select id="getAllUseable" resultType="map">
+    select 
+        id as _dictKey,
+        code as _dictValue
+    from dict_edu_common_acd_year_term
+    where
+        logic_delete = 0
+        AND `status` = 1
+      order by priority 
+   </select>
+   
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, academic_year_id, term_id, code, term_weeks, deduct_weeks, start_date, end_date, 
+    notes, priority, status, locked, standard, logic_delete
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shframework.modules.dict.entity.DictEduCommonAcdYearTermExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    t.* , CONCAT(y.title, " ", term.title) as title
+
+    FROM dict_edu_common_acd_year_term as t
+LEFT JOIN dict_edu_common_academic_year as y  ON y.id = t.academic_year_id
+LEFT JOIN dict_edu_common_term as term on term.id = t.term_id
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <choose >
+      <when test="limitStart != -1 and limitEnd != -1" >
+        limit ${limitStart} , ${limitEnd}
+      </when>
+      <when test="limitStart != -1" >
+        limit ${limitStart}
+      </when>
+    </choose>
+  </select>
+  
+   <select id="selectByExample1" resultMap="BaseResultMap" parameterType="com.shframework.modules.dict.entity.DictEduCommonAcdYearTermExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    FROM dict_edu_common_acd_year_term
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <choose >
+      <when test="limitStart != -1 and limitEnd != -1" >
+        limit ${limitStart} , ${limitEnd}
+      </when>
+      <when test="limitStart != -1" >
+        limit ${limitStart}
+      </when>
+    </choose>
+  </select>
+  
+   <select id="getYearTermByCode" resultMap="BaseResultMap">
+    select
+    	distinct
+    	 _decayt.*
+		,_decay.title AS yearTitle
+		,_dect.title AS termTitle
+		,_decay.code AS yearCode
+		,_dect.code AS termCode
+		,CONCAT(_decay.title,' ',_dect.title) AS title
+		,CONCAT(_decay.code,'-',_decay.code+1,'-',_dect.code) AS year_term_code
+    FROM dict_edu_common_acd_year_term _decayt
+    LEFT JOIN dict_edu_common_academic_year AS _decay ON _decayt.academic_year_id = _decay.id AND _decay.logic_delete = 0 AND _decay.status = 1
+	LEFT JOIN dict_edu_common_term AS _dect ON _decayt.term_id = _dect.id AND _decay.logic_delete = 0 AND _decay.status = 1
+	WHERE 1=1
+	AND _decayt.logic_delete = 0 
+	AND _decayt.status = 1
+	AND _decayt.code = #{code}
+  </select>
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dict_edu_common_acd_year_term
+    where id = #{id,jdbcType=INTEGER}
+    and logic_delete = 0
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dict_edu_common_acd_year_term
+    where id = #{id,jdbcType=INTEGER}
+    and logic_delete = 0
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shframework.modules.dict.entity.DictEduCommonAcdYearTermExample" >
+    delete from dict_edu_common_acd_year_term
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shframework.modules.dict.entity.DictEduCommonAcdYearTerm" >
+    insert into dict_edu_common_acd_year_term (id, academic_year_id, term_id, 
+      code, term_weeks, deduct_weeks, 
+      start_date, end_date, notes, 
+      priority, status, locked, 
+      standard, logic_delete)
+    values (#{id,jdbcType=INTEGER}, #{academicYearId,jdbcType=INTEGER}, #{termId,jdbcType=INTEGER}, 
+      #{code,jdbcType=VARCHAR}, #{termWeeks,jdbcType=INTEGER}, #{deductWeeks,jdbcType=INTEGER}, 
+      #{startDate,jdbcType=DATE}, #{endDate,jdbcType=DATE}, #{notes,jdbcType=VARCHAR}, 
+      #{priority,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{locked,jdbcType=INTEGER}, 
+      #{standard,jdbcType=INTEGER}, #{logicDelete,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shframework.modules.dict.entity.DictEduCommonAcdYearTerm" >
+    insert into dict_edu_common_acd_year_term
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="academicYearId != null" >
+        academic_year_id,
+      </if>
+      <if test="termId != null" >
+        term_id,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="termWeeks != null" >
+        term_weeks,
+      </if>
+      <if test="deductWeeks != null" >
+        deduct_weeks,
+      </if>
+      <if test="startDate != null" >
+        start_date,
+      </if>
+      <if test="endDate != null" >
+        end_date,
+      </if>
+      <if test="notes != null" >
+        notes,
+      </if>
+      <if test="priority != null" >
+        priority,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="locked != null" >
+        locked,
+      </if>
+      <if test="standard != null" >
+        standard,
+      </if>
+      <if test="logicDelete != null" >
+        logic_delete,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="academicYearId != null" >
+        #{academicYearId,jdbcType=INTEGER},
+      </if>
+      <if test="termId != null" >
+        #{termId,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="termWeeks != null" >
+        #{termWeeks,jdbcType=INTEGER},
+      </if>
+      <if test="deductWeeks != null" >
+        #{deductWeeks,jdbcType=INTEGER},
+      </if>
+      <if test="startDate != null" >
+        #{startDate,jdbcType=DATE},
+      </if>
+      <if test="endDate != null" >
+        #{endDate,jdbcType=DATE},
+      </if>
+      <if test="notes != null" >
+        #{notes,jdbcType=VARCHAR},
+      </if>
+      <if test="priority != null" >
+        #{priority,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="locked != null" >
+        #{locked,jdbcType=INTEGER},
+      </if>
+      <if test="standard != null" >
+        #{standard,jdbcType=INTEGER},
+      </if>
+      <if test="logicDelete != null" >
+        #{logicDelete,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shframework.modules.dict.entity.DictEduCommonAcdYearTermExample" resultType="java.lang.Integer" >
+    select count(*) from dict_edu_common_acd_year_term
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update dict_edu_common_acd_year_term
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.academicYearId != null" >
+        academic_year_id = #{record.academicYearId,jdbcType=INTEGER},
+      </if>
+      <if test="record.termId != null" >
+        term_id = #{record.termId,jdbcType=INTEGER},
+      </if>
+      <if test="record.code != null" >
+        code = #{record.code,jdbcType=VARCHAR},
+      </if>
+      <if test="record.termWeeks != null" >
+        term_weeks = #{record.termWeeks,jdbcType=INTEGER},
+      </if>
+      <if test="record.deductWeeks != null" >
+        deduct_weeks = #{record.deductWeeks,jdbcType=INTEGER},
+      </if>
+      <if test="record.startDate != null" >
+        start_date = #{record.startDate,jdbcType=DATE},
+      </if>
+      <if test="record.endDate != null" >
+        end_date = #{record.endDate,jdbcType=DATE},
+      </if>
+      <if test="record.notes != null" >
+        notes = #{record.notes,jdbcType=VARCHAR},
+      </if>
+      <if test="record.priority != null" >
+        priority = #{record.priority,jdbcType=INTEGER},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.locked != null" >
+        locked = #{record.locked,jdbcType=INTEGER},
+      </if>
+      <if test="record.standard != null" >
+        standard = #{record.standard,jdbcType=INTEGER},
+      </if>
+      <if test="record.logicDelete != null" >
+        logic_delete = #{record.logicDelete,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update dict_edu_common_acd_year_term
+    set id = #{record.id,jdbcType=INTEGER},
+      academic_year_id = #{record.academicYearId,jdbcType=INTEGER},
+      term_id = #{record.termId,jdbcType=INTEGER},
+      code = #{record.code,jdbcType=VARCHAR},
+      term_weeks = #{record.termWeeks,jdbcType=INTEGER},
+      deduct_weeks = #{record.deductWeeks,jdbcType=INTEGER},
+      start_date = #{record.startDate,jdbcType=DATE},
+      end_date = #{record.endDate,jdbcType=DATE},
+      notes = #{record.notes,jdbcType=VARCHAR},
+      priority = #{record.priority,jdbcType=INTEGER},
+      status = #{record.status,jdbcType=INTEGER},
+      locked = #{record.locked,jdbcType=INTEGER},
+      standard = #{record.standard,jdbcType=INTEGER},
+      logic_delete = #{record.logicDelete,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shframework.modules.dict.entity.DictEduCommonAcdYearTerm" >
+    update dict_edu_common_acd_year_term
+    <set >
+      <if test="academicYearId != null" >
+        academic_year_id = #{academicYearId,jdbcType=INTEGER},
+      </if>
+      <if test="termId != null" >
+        term_id = #{termId,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="termWeeks != null" >
+        term_weeks = #{termWeeks,jdbcType=INTEGER},
+      </if>
+      <if test="deductWeeks != null" >
+        deduct_weeks = #{deductWeeks,jdbcType=INTEGER},
+      </if>
+      <if test="startDate != null" >
+        start_date = #{startDate,jdbcType=DATE},
+      </if>
+      <if test="endDate != null" >
+        end_date = #{endDate,jdbcType=DATE},
+      </if>
+      <if test="notes != null" >
+        notes = #{notes,jdbcType=VARCHAR},
+      </if>
+      <if test="priority != null" >
+        priority = #{priority,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="locked != null" >
+        locked = #{locked,jdbcType=INTEGER},
+      </if>
+      <if test="standard != null" >
+        standard = #{standard,jdbcType=INTEGER},
+      </if>
+      <if test="logicDelete != null" >
+        logic_delete = #{logicDelete,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+    and logic_delete = 0
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shframework.modules.dict.entity.DictEduCommonAcdYearTerm" >
+    update dict_edu_common_acd_year_term
+    set academic_year_id = #{academicYearId,jdbcType=INTEGER},
+      term_id = #{termId,jdbcType=INTEGER},
+      code = #{code,jdbcType=VARCHAR},
+      term_weeks = #{termWeeks,jdbcType=INTEGER},
+      deduct_weeks = #{deductWeeks,jdbcType=INTEGER},
+      start_date = #{startDate,jdbcType=DATE},
+      end_date = #{endDate,jdbcType=DATE},
+      notes = #{notes,jdbcType=VARCHAR},
+      priority = #{priority,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      locked = #{locked,jdbcType=INTEGER},
+      standard = #{standard,jdbcType=INTEGER},
+      logic_delete = #{logicDelete,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+    and logic_delete = 0
+  </update>
+  
+
+<!--      * 根据年-学期的code取得对应的title -->
+<!--      * @param -->
+<!--      * @return		 -->
+<!--      * @memo			 					 -->
+<!--      * @author 	wangkang -->
+<!--      * @date    2015年3月27日 下午6:17:58 -->
+<select id="getTitleByYearTermCode" parameterType="string" resultType="map">
+	SELECT 
+		 _decay.title AS yearTitle
+		,_dect.title AS termTitle
+		
+	FROM dict_edu_common_acd_year_term AS _decayt
+	LEFT JOIN dict_edu_common_academic_year AS _decay ON _decayt.academic_year_id = _decay.id
+	LEFT JOIN dict_edu_common_term AS _dect ON _decayt.term_id = _dect.id
+	
+	WHERE _decayt.logic_delete = 0
+    AND  _decayt.`status` = 1
+	AND _decayt.`code` = #{0}
+</select>  
+
+
+<!--      * 根据 code 取得对象 -->
+<!--      * @param -->
+<!--      * @return		 -->
+<!--      * @memo			 					 -->
+<!--      * @author 	wangkang -->
+<!--      * @date    2015年5月15日 上午10:33:13 -->
+<select id="getAcdYearTermByYearTermCode" parameterType="string" resultMap="BaseResultMap">
+	SELECT 
+		<include refid="Base_Column_List" />
+	FROM dict_edu_common_acd_year_term AS _decayt
+	WHERE _decayt.logic_delete = 0
+    AND  _decayt.`status` = 1
+	AND _decayt.`code` = #{0}
+</select>  
+
+
+<!-- // 学年+学期名称 -->
+<select id="getYearTermTitle" resultMap="BaseResultMap" parameterType="map" >
+	select
+   	 	t.* , CONCAT(y.code, '-', term.code) as title, y.code as yearCode
+		,CONCAT(y.code,'-',y.code+1,'-',term.code) AS year_term_code
+		,y.title AS yearTitle
+		,term.title AS termTitle
+		,term.code AS termCode
+    FROM dict_edu_common_acd_year_term as t
+	LEFT JOIN dict_edu_common_academic_year as y  ON y.id = t.academic_year_id
+	LEFT JOIN dict_edu_common_term as term on term.id = t.term_id
+	WHERE  t.status = 1
+	AND t.logic_delete = 0
+	ORDER by t.priority, t.code, t.id
+</select>	
+
+
+<!--      * 根据 yearTermCode 取得 DictEduCommonAcdYearTerm ，包括 yearTitle，termTitle，yearCode，termCode -->
+<!--      * @param -->
+<!--      * @return		 -->
+<!--      * @memo			 					 -->
+<!--      * @author 	wangkang -->
+<!--      * @date    2015年5月20日 下午6:57:54 -->
+<select id="selectAcdYearTermByYearTermCode" resultMap="BaseResultMap" parameterType="string">
+	SELECT 
+		 _decayt.*
+		,_decay.title AS yearTitle
+		,_dect.title AS termTitle
+		,_decay.code AS yearCode
+		,_dect.code AS termCode
+		,CONCAT(_decay.title,' ',_dect.title) AS title
+		,CONCAT(_decay.code,'-',_decay.code+1,'-',_dect.code) AS year_term_code
+		
+	FROM dict_edu_common_acd_year_term AS _decayt
+	LEFT JOIN dict_edu_common_academic_year AS _decay ON _decayt.academic_year_id = _decay.id
+	LEFT JOIN dict_edu_common_term AS _dect ON _decayt.term_id = _dect.id
+	
+	WHERE _decayt.logic_delete = 0
+    AND  _decayt.`status` = 1
+	AND _decayt.`code` = #{0}
+	ORDER by _decayt.priority, _decayt.id, _decayt.code
+</select>  
+
+<select id="selectIdByCode" resultType="java.lang.Integer" parameterType="java.lang.String">
+	select id from dict_edu_common_academic_year where code = #{code}
+</select>  
+
+
+<!--      * 根据 yearTermId 取得 DictEduCommonAcdYearTerm ，包括 yearTitle，termTitle，yearCode，termCode -->
+<!--      * @param -->
+<!--      * @return		 -->
+<!--      * @memo			 					 -->
+<!--      * @author 	wangkang -->
+<!--      * @date    2015年5月20日 下午6:57:54 -->
+<select id="selectAcdYearTermByYearTermId" resultMap="BaseResultMap" parameterType="Integer">
+	SELECT 
+		 _decayt.*
+		,_decay.title AS yearTitle
+		,_dect.title AS termTitle
+		,_decay.code AS yearCode
+		,_dect.code AS termCode
+		,CONCAT(_decay.title,' ',_dect.title) AS title
+		,CONCAT(_decay.code,'-',_decay.code+1,'-',_dect.code) AS year_term_code
+		
+	FROM dict_edu_common_acd_year_term AS _decayt
+	LEFT JOIN dict_edu_common_academic_year AS _decay ON _decayt.academic_year_id = _decay.id
+	LEFT JOIN dict_edu_common_term AS _dect ON _decayt.term_id = _dect.id
+	
+	WHERE _decayt.logic_delete = 0
+    AND  _decayt.`status` = 1
+	AND _decayt.`id` = #{0}
+	ORDER by _decayt.priority, _decayt.id, _decayt.code
+</select>  
+
+<!-- 	 * 取得大于当前学期的学年学期id集合 -->
+<!-- 	 * @param -->
+<!-- 	 * @return		 -->
+<!-- 	 * @memo			 					 -->
+<!-- 	 * @author 	wangkang -->
+<!-- 	 * @date    2015年6月3日 下午5:21:18 -->
+ <select id="getYearTermIdListOfGreaterCurrTerm" parameterType="string" resultType="java.lang.Integer" >
+    SELECT id
+	FROM dict_edu_common_acd_year_term _decayt
+	WHERE 
+		_decayt.logic_delete = 0
+	AND
+		_decayt.`status` = 1
+	AND
+		CAST(REPLACE(_decayt.`code`,'-','') AS signed) > CAST(REPLACE(#{0},'-','') AS signed)
+</select>
+</mapper>

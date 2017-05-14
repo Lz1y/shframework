@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shframework.modules.sys.mapper.ResourceMapper" >
+  <resultMap id="BaseResultMap" type="resource" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="rule" property="rule" jdbcType="VARCHAR" />
+    <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+    <result column="has_child" property="hasChild" jdbcType="INTEGER" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="show_menu" property="showMenu" jdbcType="INTEGER" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+    <result column="criteria" property="criteria" jdbcType="VARCHAR" />
+    <result column="priority" property="priority" jdbcType="INTEGER" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="last_modify_user_id" property="lastModifyUserId" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="locked" property="locked" jdbcType="INTEGER" />
+    <result column="logic_delete" property="logicDelete" jdbcType="INTEGER" />
+	<collection property="roles" ofType="role" >
+	  <id column="role_id" property="id" jdbcType="INTEGER" />
+	  <result column="role_code" property="code" jdbcType="VARCHAR" />
+	  <result column="role_title" property="title" jdbcType="VARCHAR" />
+	</collection>
+  </resultMap>
+  
+  <select id="res_role" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+	select 
+		_res.id, _res.rule, _res.title, _role.id as role_id, _role.`code` as role_code, _role.title as role_title, _res.icon
+	from sys_resource _res
+		inner join sys_role_resource _srr on _res.id = _srr.resource_id
+		inner join sys_role _role on _srr.role_id = _role.id
+		inner join sys_user_role _sur on _role.id = _sur.role_id
+		inner join sys_user _su on _sur.user_id = _su.id
+	where 1 = 1
+		and _su.id = #{id}
+	order by _res.priority desc
+  </select>
+  
+  <select id="allResource" resultMap="BaseResultMap">
+    <![CDATA[ select sr.id, sr.rule, sr.title from sys_resource sr where sr.id <> 1 ]]>
+  </select>
+  
+  <select id="selectByParentId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" /> from resource where parent_id = #{parentId}
+  </select>
+  
+  <!-- 
+  /**
+	 * 通过用户拥有的角色的列表，获取相对于该用户活动的资源的id 的列表
+	 * @param userRoleList
+	 * @return
+	 * @author RanWeizheng
+	 */
+   -->
+   <select id="getActiveResourceIdList" parameterType="map" resultType="java.lang.Integer">
+   SELECT 
+   		DISTINCT(_resource.id)  
+   	from sys_resource as _resource
+	INNER JOIN sys_role_resource as _srr ON _resource.id = _srr.resource_id
+	INNER JOIN sys_role as _role ON _role.id = _srr.role_id
+	INNER JOIN sys_role_cfgrole as _src ON _src.cfg_role_id=_srr.role_id
+	
+	WHERE _resource.logic_delete = 0
+	AND _role.logic_delete = 0
+		
+		<if test="userRoleList!=null">
+		AND _src.role_id in 	
+			<foreach collection="userRoleList" item="item"  separator="," open="(" close=")">
+			#{item.id}
+			</foreach>
+		</if>
+   </select>
+   
+   <!-- 
+   /**
+	 * 查询符合条件的资源
+	 * @param parMap
+	 * @return
+	 * @author RanWeizheng
+	 */
+	-->
+   <select id="queryResList" resultMap="BaseResultMap" parameterType="map">
+  	select 
+    <include refid="Base_Column_List" />
+    from sys_resource _sr
+	
+	where _sr.logic_delete = 0
+	<if test="resId!=null">
+		and _sr.parent_id = #{resId}
+	</if>
+	<if test="resIdList!=null">
+		and _sr.parent_id in <foreach collection="resIdList" item="listItem" open="(" close=")" separator="," >#{listItem}</foreach>
+	</if>
+	${searchCondition}
+    <if test="searchCondition == null and defaultSortField != null" >
+      order by ${defaultSortField}
+    </if>
+    limit #{limitStart}, #{limitEnd}
+  </select>
+  
+  <!-- 
+  /**
+	 * 获得符合条件的资源的数量
+	 * @param parMap
+	 * @return
+	 * @author RanWeizheng
+	 */
+   -->
+  <select id="queryResListCount" resultType="java.lang.Integer" parameterType="map">
+  	select 
+	count(_sr.id)
+    from sys_resource _sr
+	where _sr.logic_delete = 0
+	<if test="resId!=null">
+		and _sr.parent_id = #{resId}
+	</if>
+	<if test="resIdList!=null">
+		and _sr.parent_id in <foreach collection="resIdList" item="listItem" open="(" close=")" separator="," >#{listItem}</foreach>
+	</if>
+	${searchCondition}
+    <if test="searchCondition == null and defaultSortField != null" >
+      order by ${defaultSortField}
+    </if>
+  </select>
+  
+  <select id="userResRole" parameterType="map" resultMap="BaseResultMap">
+	select 
+		_res.id, _res.rule, _res.title, _role.id as role_id, _role.`code` as role_code, _role.title as role_title, _res.icon
+	from sys_resource _res
+		inner join sys_role_resource _srr on _res.id = _srr.resource_id
+		inner join sys_role _role on _srr.role_id = _role.id
+		inner join sys_user_role _sur on _role.id = _sur.role_id
+		inner join sys_user _su on _sur.user_id = _su.id
+	where 1 = 1
+	and _res.logic_delete = 0
+	and _role.logic_delete = 0
+	<if test="resIdList!=null">
+		and _res.id in <foreach collection="resIdList" item="listItem" open="(" close=")" separator="," >#{listItem}</foreach>
+	</if>		
+	<if test="userId != null">
+		and _su.id = #{userId}
+	</if>
+	order by _res.priority desc
+  </select>
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, title, rule, parent_id, has_child, url, show_menu, icon, criteria, priority, description, 
+    last_modify_user_id, create_date, modify_date, status, locked, logic_delete
+  </sql>
+  
+  <select id="queryPmstr" resultType="java.lang.String" parameterType="java.lang.Integer">
+	select sp.`code` from sys_permission sp where sp.id in (
+		select distinct(srr.permission_id) from sys_role_resource_permission srr where srr.resource_id = #{id, jdbcType=INTEGER} 
+	)
+  </select>
+  
+  <select id="queryPmsTitle" resultType="java.lang.String" parameterType="java.lang.String">
+  	select title from sys_permission where code = #{code, jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByRule" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select id, rule, title, criteria from sys_resource where rule = #{rule, jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shframework.modules.sys.entity.ResourceExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sys_resource
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <choose >
+      <when test="limitStart != -1 and limitEnd != -1" >
+        limit ${limitStart} , ${limitEnd}
+      </when>
+      <when test="limitStart != -1" >
+        limit ${limitStart}
+      </when>
+    </choose>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_resource
+    where id = #{id,jdbcType=INTEGER}
+    and logic_delete=0
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_resource
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shframework.modules.sys.entity.ResourceExample" >
+    delete from sys_resource
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shframework.modules.sys.entity.Resource" >
+    insert into sys_resource (id, title, rule, 
+      parent_id, has_child, url, 
+      show_menu, priority, description, 
+      last_modify_user_id, create_date, modify_date, 
+      status, locked, logic_delete
+      )
+    values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{rule,jdbcType=VARCHAR}, 
+      #{parentId,jdbcType=INTEGER}, #{hasChild,jdbcType=INTEGER}, #{url,jdbcType=VARCHAR}, 
+      #{showMenu,jdbcType=INTEGER}, #{priority,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}, 
+      #{lastModifyUserId,jdbcType=INTEGER}, now(), now(), 
+      #{status,jdbcType=INTEGER}, #{locked,jdbcType=INTEGER}, #{logicDelete,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.shframework.modules.sys.entity.Resource" >
+    insert into sys_resource
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="rule != null" >
+        rule,
+      </if>
+      <if test="parentId != null" >
+        parent_id,
+      </if>
+      <if test="hasChild != null" >
+        has_child,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="showMenu != null" >
+        show_menu,
+      </if>
+      <if test="priority != null" >
+        priority,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="lastModifyUserId != null" >
+        last_modify_user_id,
+      </if>
+      
+        create_date,
+        modify_date,
+      
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="locked != null" >
+        locked,
+      </if>
+      <if test="logicDelete != null" >
+        logic_delete,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="rule != null" >
+        #{rule,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="hasChild != null" >
+        #{hasChild,jdbcType=INTEGER},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="showMenu != null" >
+        #{showMenu,jdbcType=INTEGER},
+      </if>
+      <if test="priority != null" >
+        #{priority,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="lastModifyUserId != null" >
+        #{lastModifyUserId,jdbcType=INTEGER},
+      </if>
+      
+		now(),
+		now(),
+		
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="locked != null" >
+        #{locked,jdbcType=INTEGER},
+      </if>
+      <if test="logicDelete != null" >
+        #{logicDelete,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shframework.modules.sys.entity.ResourceExample" resultType="java.lang.Integer" >
+    select count(*) from sys_resource
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update sys_resource
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.title != null" >
+        title = #{record.title,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rule != null" >
+        rule = #{record.rule,jdbcType=VARCHAR},
+      </if>
+      <if test="record.parentId != null" >
+        parent_id = #{record.parentId,jdbcType=INTEGER},
+      </if>
+      <if test="record.hasChild != null" >
+        has_child = #{record.hasChild,jdbcType=INTEGER},
+      </if>
+      <if test="record.url != null" >
+        url = #{record.url,jdbcType=VARCHAR},
+      </if>
+      <if test="record.showMenu != null" >
+        show_menu = #{record.showMenu,jdbcType=INTEGER},
+      </if>
+      <if test="record.priority != null" >
+        priority = #{record.priority,jdbcType=INTEGER},
+      </if>
+      <if test="record.description != null" >
+        description = #{record.description,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lastModifyUserId != null" >
+        last_modify_user_id = #{record.lastModifyUserId,jdbcType=INTEGER},
+      </if>
+      <if test="record.createDate != null" >
+        create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      </if>
+      
+        modify_date = now(),
+      
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.locked != null" >
+        locked = #{record.locked,jdbcType=INTEGER},
+      </if>
+      <if test="record.logicDelete != null" >
+        logic_delete = #{record.logicDelete,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update sys_resource
+    set id = #{record.id,jdbcType=INTEGER},
+      title = #{record.title,jdbcType=VARCHAR},
+      rule = #{record.rule,jdbcType=VARCHAR},
+      parent_id = #{record.parentId,jdbcType=INTEGER},
+      has_child = #{record.hasChild,jdbcType=INTEGER},
+      url = #{record.url,jdbcType=VARCHAR},
+      show_menu = #{record.showMenu,jdbcType=INTEGER},
+      priority = #{record.priority,jdbcType=INTEGER},
+      description = #{record.description,jdbcType=VARCHAR},
+      last_modify_user_id = #{record.lastModifyUserId,jdbcType=INTEGER},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      modify_date = now(),
+      status = #{record.status,jdbcType=INTEGER},
+      locked = #{record.locked,jdbcType=INTEGER},
+      logic_delete = #{record.logicDelete,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shframework.modules.sys.entity.Resource" >
+    update sys_resource
+    <set >
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="rule != null" >
+        rule = #{rule,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        parent_id = #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="hasChild != null" >
+        has_child = #{hasChild,jdbcType=INTEGER},
+      </if>
+      <if test="url != null and url !=''" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="url == ''" >
+        url = null,
+      </if>
+      <if test="showMenu != null" >
+        show_menu = #{showMenu,jdbcType=INTEGER},
+      </if>
+      <if test="priority != null" >
+        priority = #{priority,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="lastModifyUserId != null" >
+        last_modify_user_id = #{lastModifyUserId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      
+        modify_date = now(),
+      
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="locked != null" >
+        locked = #{locked,jdbcType=INTEGER},
+      </if>
+      <if test="logicDelete != null" >
+        logic_delete = #{logicDelete,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shframework.modules.sys.entity.Resource" >
+    update sys_resource
+    set title = #{title,jdbcType=VARCHAR},
+      rule = #{rule,jdbcType=VARCHAR},
+      parent_id = #{parentId,jdbcType=INTEGER},
+      has_child = #{hasChild,jdbcType=INTEGER},
+      url = #{url,jdbcType=VARCHAR},
+      show_menu = #{showMenu,jdbcType=INTEGER},
+      priority = #{priority,jdbcType=INTEGER},
+      description = #{description,jdbcType=VARCHAR},
+      last_modify_user_id = #{lastModifyUserId,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      modify_date = now(),
+      status = #{status,jdbcType=INTEGER},
+      locked = #{locked,jdbcType=INTEGER},
+      logic_delete = #{logicDelete,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <!-- 
+  /**
+	 * 比较库之间的数据用，不要提交！
+	 * @return
+	 * @author RanWeizheng
+	 * @date 2016年5月17日 下午6:28:45
+	 */
+	public List<Resource> queryAllTempRes();
+   -->
+   <select id="queryAllTempRes" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from sys_resource_temp _sr
+	where _sr.logic_delete = 0
+	order by _sr.parent_id asc
+  </select>
+</mapper>

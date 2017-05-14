@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sitemesh>
+
+	<mapping path="/*" decorator="/WEB-INF/decorators/defaultDecorator.ftl" />
+	<mapping path="/" exclue="true" />
+	<mapping path="/index" exclue="true" />
+	<mapping path="/login" exclue="true" />
+	<mapping path="/signup" exclue="true" />
+	<mapping path="/logout" exclue="true" />
+	<mapping path="/showrole" exclue="true" />
+	<mapping path="/error/*" exclue="true" />
+
+	<mapping path="/dict/edu/common/department/*/*/all/list" decorator="/WEB-INF/decorators/defaultDecorator.ftl" />
+	<mapping path="/dict/edu/common/department/*/*/*/list" exclue="true" />
+	<mapping path="/dict/edu/common/department/*/*/*/add" exclue="true" />
+	<mapping path="/dict/edu/common/department/*/*/*/edit" exclue="true" />
+
+	<mapping path="/dict/edu/common/deptmajor/*/*/all/list" decorator="/WEB-INF/decorators/defaultDecorator.ftl" />
+	<mapping path="/dict/edu/common/deptmajor/*/*/*/list" exclue="true" />
+	<mapping path="/dict/edu/common/deptmajor/*/*/*/add" exclue="true" />
+	<mapping path="/dict/edu/common/deptmajor/*/*/*/edit" exclue="true" />
+
+	<mapping path="/sys/monitor/*/*/stms/elctstudent" exclue="true" />
+
+	<content-processor>
+		<tag-rule-bundle class="com.shframework.common.web.tag.JavaScriptTagRuleBundle" />
+	</content-processor>
+</sitemesh>

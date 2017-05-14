@@ -1,0 +1,5 @@
+/*列表页样式修正*/
+
+.table-hover > tbody > tr:hover {
+  background-color: #D4D4D4;
+}

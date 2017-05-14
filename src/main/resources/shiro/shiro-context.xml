@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager" />
+		<!-- override these for application-specific URLs if you like: -->
+		<property name="loginUrl" value="${loginUrl}" />
+		<property name="successUrl" value="/home" />
+		<property name="unauthorizedUrl" value="/unauthorized" />
+		<!-- The 'filters' property is not necessary since any declared javax.servlet.Filter bean -->
+		<!-- defined will be automatically acquired and available via its beanName in chain -->
+		<!-- definitions, but you can perform instance overrides or name aliases here if you like: -->
+		<!-- <property name="filters"> <util:map> <entry key="anAlias" value-ref="someFilter" /> </util:map> </property> -->
+		<property name="filters">
+			<map>
+				<entry key="single">
+					<bean class="com.shframework.common.auth.filter.SingleRoleFilter" />
+				</entry>
+				<entry key="act">
+					<bean class="com.shframework.common.auth.filter.ActFilter" />
+				</entry>
+				<entry key="path">
+					<bean class="com.shframework.common.auth.filter.PathFilter" />
+				</entry>
+				<entry key="signin">
+					<bean class="com.shframework.common.auth.filter.FormAuthenticationFilter" />
+				</entry><!-- 
+				<entry key="forcelogout">
+					<bean class="com.shframework.common.auth.filter.ForceLogoutFilter" />
+				</entry> -->
+			</map>
+		</property>
+		
+		<property name="filterChainDefinitions">
+			<value>
+				/ = anon
+				/error/** = anon
+				/login = anon
+				/loginsso = anon
+				/home = signin
+				/cpwd = signin
+				/crole = anon
+				/showrole = anon
+				/logout = logout
+				/**/save = signin
+				/authenticate = anon
+				/message/** = signin
+				/notification/** = signin
+				/resources/** = anon
+				/**/directaccess = signin
+				/** = signin,path
+			</value>
+		</property>
+	</bean>
+
+	<!-- Define any javax.servlet.Filter beans you want anywhere in this application context. -->
+	<!-- They will automatically be acquired by the 'shiroFilter' bean above and made available -->
+	<!-- to the 'filterChainDefinitions' property. Or you can manually/explicitly add them -->
+	<!-- to the shiroFilter's 'filters' Map if desired. See its JavaDoc for more details. -->
+	<!-- <bean id="someFilter" class="..." /> <bean id="anotherFilter" class="..."></bean> -->
+
+    <bean id="sessionIdGenerator" class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator"/>
+    
+    <bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO " >
+    	<property name="sessionIdGenerator" ref="sessionIdGenerator"/>
+    </bean>
+    
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<!-- Single realm app. If you have multiple realms, use the 'realms' property instead. -->
+		<property name="realms">
+            <list>
+                <bean id="jdbcRealm" class="com.shframework.common.auth.realm.JdbcRealm" />
+            </list>
+        </property>
+		<!-- By default the servlet container sessions will be used. Uncomment this line to use shiro's native sessions (see the JavaDoc for more): -->
+		<property name="sessionManager" ref="sessionManager" />
+		<property name="cacheManager" ref="shiroEhcacheManager" />
+	</bean>
+
+	<bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+		<property name="globalSessionTimeout" value="${security.globalSessionTimeout}" />
+		<property name="sessionDAO" ref="sessionDAO"/>
+	</bean>
+
+	<!-- 用户授权信息Cache, 采用EhCache -->  
+	<bean id="shiroEhcacheManager" class="com.shframework.common.support.EhCacheManager"> 
+		<property name="cacheManagerConfigFile" value="classpath:ehcache/ehcache-shiro.xml" />  
+	</bean>
+
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+
+	<bean id="sha512Matcher" class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+		<!-- Modifying any piece of the matcher will likely invalidate the ability to match any passphrases in the DB -->
+		<property name="storedCredentialsHexEncoded" value="${shiro.storedCredentialsHexEncoded}" />
+		<property name="hashAlgorithmName" value="${shiro.hashAlgorithmName}" />
+		<property name="hashIterations" value="${shiro.hashIterations}" />
+	</bean>
+
+	<bean id="customPermissionResolver" class="com.shframework.common.auth.resolver.CustomPermissionResolver" />
+
+    <bean id="jdbcRealm" class="com.shframework.common.auth.realm.JdbcRealm">
+		<property name="credentialsMatcher" ref="sha512Matcher" />
+		<property name="permissionResolver" ref="customPermissionResolver" />
+    </bean>
+
+	<!-- Define the Shiro Realm implementation you want to use to connect to your back-end -->
+</beans>
